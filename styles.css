@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  overflow: auto;       /* allow normal scrolling */
+  height: 100%;         /* ensure page fills the iframe */
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #222;
+}
+
+.top-nav {
+  position: relative;
+  background: #ffffff;
+  padding: 15px 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  height: 60px;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 30px;
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+nav {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 30px;
+  align-items: baseline;
+}
+
+.nav-tab {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.nav-tab.active {
+  color: #00bfa5;
+  border-bottom: 2px solid #00bfa5;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+main {
+  padding: 40px 30px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Prints Stock table */
+#printsStockTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+#printsStockTable th,
+#printsStockTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.table-actions button {
+  padding: 6px 12px;
+  font-size: 1rem;
+}
+
+/* Hide only the “Chk” header, keep the checkboxes visible */
+#printsStockTable th:last-child {
+  visibility: hidden;
+  /* keep its column width so the checkboxes don’t shift */
+}
+/* Only show the left border on the checkbox column, hide top/right/bottom */
+#printsStockTable th:last-child,
+#printsStockTable td:last-child {
+  border-top:    1px solid #ddd;  /* match your other cell borders */;
+  border-right:  1px solid #ddd;  /* match your other cell borders */;
+  border-bottom: 1px solid #ddd;  /* match your other cell borders */;
+  border-left:   1px solid #ddd;  /* match your other cell borders */
+}
+
+/* Filaments table styling */
+#filamentsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+#filamentsTable th,
+#filamentsTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.table-actions button {
+  padding: 6px 12px;
+  font-size: 1rem;
+}
+
+/* Summary table styling */
+#filamentSummaryTable {
+  border-collapse: collapse;      /* match existing tables */
+  margin: 0 0 20px 0;            /* 20px gap below */
+  width: auto;                    /* shrink to fit content */
+}
+
+/* same cell borders & padding as other tables */
+#filamentSummaryTable th,
+#filamentSummaryTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+/* summary table sizes to its content, not full width */
+#filamentSummaryTable {
+  width: auto !important;       /* override the 100% full-width */
+  table-layout: auto;           /* columns sized by content */
+}
+
+/* prevent header text wrapping so width = header length */
+#filamentSummaryTable th,
+#filamentSummaryTable td {
+  white-space: nowrap;
+}
