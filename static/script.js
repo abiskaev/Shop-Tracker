@@ -311,3 +311,28 @@ document.addEventListener('DOMContentLoaded',()=>{
     renumber(); saveAll(); updateDelete();
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabButtons = document.querySelectorAll('.nav-tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  if (!tabButtons.length) {
+    console.warn("⚠️ No .nav-tab elements found. Is the HTML loaded yet?");
+    return;
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab)?.classList.add('active');
+    });
+  });
+
+  // Automatically activate first tab
+  tabButtons[0].click();
+});
