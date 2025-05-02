@@ -1,0 +1,20 @@
+[
+  {
+    "amount": "100",
+    "comments": "Test3",
+    "duration": "14",
+    "lineNumber": 1,
+    "paymentDate": "01/05/2025",
+    "rentalPeriod": "30/04/2025 - 17/05/2025",
+    "tablePlace": "111"
+  },
+  {
+    "amount": "3123",
+    "comments": "Test 2",
+    "duration": "8",
+    "lineNumber": 2,
+    "paymentDate": "29/04/2025",
+    "rentalPeriod": "17/05/2025 - 28/05/2025",
+    "tablePlace": "222"
+  }
+]

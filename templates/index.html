@@ -1173,6 +1173,10 @@ let suppliers = [];
 let categories = [];
 let soldOutSortColumn = null;
 let soldOutSortDirection = 'asc';
+let purchases = [];
+let rentalPayments = [];
+
+
 
 /* Remembers the last date typed in the Monthly-Sales “Add Sale” strip */
 let lastMonthlySaleDate =
@@ -1184,97 +1188,119 @@ let monthlySalesDirty = false;
 
 // --- Data Handling (Load, Save, Reset) ---
 function loadData() {
-    try {
-        // Load inventory, ensuring it's an object
-        const inv = localStorage.getItem('inventory');
-        inventory = inv ? JSON.parse(inv) : {};
-        if (!inventory || typeof inventory !== 'object') inventory = {};
+  return fetch("/data")
+    .then(response => response.json())
+    .then(data => {
+      console.log("✅ Loaded from backend:", data);
+      console.log("🧪 Type of data.transactions:", typeof data.transactions);
 
-        // Load soldOutItems, ensuring it's an object
-        const soldOut = localStorage.getItem('soldOutItems');
-        soldOutItems = soldOut ? JSON.parse(soldOut) : {};
-        if (!soldOutItems || typeof soldOutItems !== 'object') soldOutItems = {};
-
-        // Load transactions, ensuring it's an array and filtering invalid entries
-        const trans = localStorage.getItem('transactions');
-        transactions = trans ? JSON.parse(trans) : [];
-        transactions = Array.isArray(transactions) ? transactions.filter(t =>
-            t && typeof t === 'object' &&
-            ['sale', 'purchase'].includes(t.type) &&
-            t.item && // Item name must exist
-            typeof t.qty === 'number' && t.qty > 0 && // Qty must be a positive number
-            typeof t.total === 'number' && t.total >= 0 && // Total must be a non-negative number
-            t.date && /^\d{2}\/\d{2}\/\d{4}$/.test(t.date) // Date must be in DD/MM/YYYY format
-        ) : [];
-
-        // Load writeOffs, ensuring it's an array and filtering invalid entries
-        const wo = localStorage.getItem('writeOffs');
-        writeOffs = wo ? JSON.parse(wo) : [];
-        writeOffs = Array.isArray(writeOffs) ? writeOffs.filter(w =>
-            w && typeof w === 'object' &&
-            w.item && // Item name must exist
-            typeof w.qty === 'number' && w.qty > 0 && // Qty must be a positive number
-            typeof w.cost === 'number' && w.cost >= 0 && // Cost must be a non-negative number
-            w.date && /^\d{2}\/\d{2}\/\d{4}$/.test(w.date) // Date must be in DD/MM/YYYY format
-        ) : [];
-
-        // Load suppliers, ensuring it's an array of non-empty strings
-        const sup = localStorage.getItem('suppliers');
-        suppliers = sup ? JSON.parse(sup) : [];
-        suppliers = Array.isArray(suppliers) ? suppliers.filter(s => typeof s === 'string' && s.trim()) : [];
-
-        // Load categories, ensuring it's an array of non-empty strings
-        const cat = localStorage.getItem('categories');
-        categories = cat ? JSON.parse(cat) : [];
-        categories = Array.isArray(categories) ? categories.filter(c => typeof c === 'string' && c.trim()) : [];
-
-        console.log('Data loaded:', { inventory, soldOutItems, transactions, writeOffs, suppliers, categories });
-        recalculateInventory(); // Initial calculation after loading
-    } catch (e) {
-        console.error('Failed to load or parse localStorage data:', e);
-        alert('Error loading data. Some data might be corrupted. Check console for details. Using defaults or existing valid data.');
-        // Attempt to continue with potentially partially loaded data or defaults
-        inventory = inventory || {};
-        soldOutItems = soldOutItems || {};
-        transactions = Array.isArray(transactions) ? transactions : [];
-        writeOffs = Array.isArray(writeOffs) ? writeOffs : [];
-        suppliers = Array.isArray(suppliers) ? suppliers : [];
-        categories = Array.isArray(categories) ? categories : [];
-        // Don't reset valid data if parsing failed for only one item
-        recalculateInventory(); // Try recalculating even after error
-    }
+      try {
+  inventory = typeof data.inventory === 'object' ? data.inventory : JSON.parse(data.inventory);
+} catch {
+  console.warn("⚠️ Failed to parse inventory from backend. Defaulting to empty.");
+  inventory = {};
 }
+
+      soldOutItems = data.soldOutItems || {};
+      if (!soldOutItems || typeof soldOutItems !== 'object') soldOutItems = {};
+
+      transactions = Array.isArray(data.transactions) ? data.transactions.filter(t =>
+        t && typeof t === 'object' &&
+        ['sale', 'purchase'].includes(t.type) &&
+        t.item &&
+        typeof t.qty === 'number' && t.qty > 0 &&
+        typeof t.total === 'number' && t.total >= 0 &&
+        t.date && /^\d{2}\/\d{2}\/\d{4}$/.test(t.date)
+      ) : [];
+
+      purchases = transactions.filter(t => t.type === "purchase");
+
+      writeOffs = Array.isArray(data.writeOffs) ? data.writeOffs.filter(w =>
+        w && typeof w === 'object' &&
+        w.item &&
+        typeof w.qty === 'number' && w.qty > 0 &&
+        typeof w.cost === 'number' && w.cost >= 0 &&
+        w.date && /^\d{2}\/\d{2}\/\d{4}$/.test(w.date)
+      ) : [];
+
+      suppliers = Array.isArray(data.suppliers) ? data.suppliers.filter(s => typeof s === 'string' && s.trim()) : [];
+
+      categories = Array.isArray(data.categories) ? data.categories.filter(c => typeof c === 'string' && c.trim()) : [];
+
+      window.rentalPayments = Array.isArray(data.rentalPayments) ? data.rentalPayments : [];
+
+      console.log('Data loaded:', {
+        inventory,
+        soldOutItems,
+        transactions,
+        writeOffs,
+        suppliers,
+        categories,
+        rentalPayments: window.rentalPayments
+      });
+
+      recalculateInventory();
+    })
+    .catch(e => {
+      console.error("❌ Failed to load from backend:", e);
+      alert("Error loading data from backend. Using empty/default values.");
+
+      inventory = {};
+      soldOutItems = {};
+      transactions = [];
+      writeOffs = [];
+      suppliers = [];
+      categories = [];
+      window.rentalPayments = [];
+
+      recalculateInventory();
+    });
+}
+
+
 
 function saveData() {
-    try {
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        localStorage.setItem('transactions', JSON.stringify(transactions));
-        localStorage.setItem('writeOffs', JSON.stringify(writeOffs));
-        localStorage.setItem('suppliers', JSON.stringify(suppliers));
-        localStorage.setItem('categories', JSON.stringify(categories));
-        localStorage.setItem('soldOutItems', JSON.stringify(soldOutItems));
-        console.log('Data saved to localStorage');
-    } catch (e) {
-        console.error('Error saving data to localStorage:', e);
-        alert('Failed to save data. Check browser storage permissions and quota.');
-    }
+  try {
+    const dataToSave = {
+      inventory,
+      transactions,
+      writeOffs,
+      suppliers,
+      categories,
+      soldOutItems,
+      rentalPayments: window.rentalPayments || []
+    };
+
+    console.log('Saving dataToSave:', dataToSave); // ✅ Confirm it’s populated
+
+    fetch('/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataToSave)
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          console.log('✅ Data saved to backend');
+        } else {
+          console.error('❌ Failed to save data:', result.message);
+          alert('Failed to save changes to backend.');
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error saving data:', error);
+        alert('Failed to save changes to backend.');
+      });
+  } catch (e) {
+    console.error('Error saving data:', e);
+    alert('Failed to save data. Check browser storage permissions and quota.');
+  }
 }
 
-function resetData() {
-    if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-        inventory = {};
-        soldOutItems = {};
-        transactions = [];
-        writeOffs = [];
-        suppliers = [];
-        categories = [];
-        saveData();
-        // Reload all UI elements
-        initializeUI(); // Call a function to refresh everything
-        console.log('Data reset to defaults');
-        alert("All data has been reset.");
-    }
-}
+
+
 
 // --- UI Interaction (Toggles, Modals) ---
 function toggleSection(header) {
@@ -3333,6 +3359,9 @@ function savePurchaseFromModal() {
 
 
 function updatePurchaseHistoryTable() {
+   console.log("🧾 Purchases available in UI update:", purchases);
+   console.log("📦 Updating Purchase History Table...");
+   console.log("🧾 Purchases:", transactions.filter(t => t.type === "purchase"));
     const tbody = document.getElementById('purchaseHistoryBody');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -3379,6 +3408,8 @@ function updatePurchaseHistoryTable() {
         cell.style.textAlign = 'left';
         cell.innerHTML = '<button onclick="openAllPurchasesModal()">View More</button>';
     }
+   console.log("✅ Purchase table update complete.");
+
 }
 
 
@@ -4646,23 +4677,29 @@ function monitorDateInputs() {
 
 
 function initializeApp() {
-    try {
-        console.log("Loading data...");
-        loadData();
-        console.log("Initializing UI...");
-        initializeUI();
-        monitorDateInputs(); // Start monitoring date inputs
-        console.log('Application initialized successfully.');
-    } catch (e) {
-        console.error('Critical error during application initialization:', e);
-        document.body.innerHTML = `<div style="padding: 20px; text-align: center; color: red; font-family: Arial, sans-serif;">
-            <h1>Application Error</h1>
-            <p>A critical error occurred during startup. Please check the browser console (F12) for details.</p>
-            <p>You might need to clear application data (localStorage) or contact support.</p>
-            <pre style="text-align: left; background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc; white-space: pre-wrap;">${e.stack || e.message}</pre>
-        </div>`;
-    }
+  try {
+    console.log("Loading data...");
+    loadData().then(() => {
+      console.log("Initializing UI...");  
+      initializeUI();
+      monitorDateInputs();
+      loadRentalPayments(); // ✅ This line is crucial!
+      console.log('Application initialized successfully.');
+    });
+  } catch (e) {
+    console.error('Critical error during application initialization:', e);
+    document.body.innerHTML = `<div style="padding: 20px; text-align: center; color: red; font-family: Arial, sans-serif;">
+        <h1>Application Error</h1>
+        <p>A critical error occurred during startup. Please check the browser console (F12) for details.</p>
+        <p>You might need to clear application data (localStorage) or contact support.</p>
+        <pre style="text-align: left; background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc; white-space: pre-wrap;">${e.stack || e.message}</pre>
+    </div>`;
+  }
 }
+
+
+
+
 
 
 // --- Global Event Listeners ---
@@ -5179,23 +5216,43 @@ function closeRentalPaymentModal() {
 
 // Save Rental Payment (add your save logic here)
 function saveRentalPayment() {
-    const amount = document.getElementById('rentalAmount').value;
-    const date = document.getElementById('rentalDate').value;
-    const period = document.getElementById('rentalPeriod').value;
-    const duration = document.getElementById('rentalDuration').value;
-    const tablePlace = document.getElementById('rentalTablePlace').value;
-    const comments = document.getElementById('rentalComments').value;
+    try {
+        const amount = document.getElementById('rentalAmount').value;
+        const date = document.getElementById('rentalDate').value;
+        const period = document.getElementById('rentalPeriod').value;
+        const duration = document.getElementById('rentalDuration').value;
+        const tablePlace = document.getElementById('rentalTablePlace').value;
+        const comments = document.getElementById('rentalComments').value;
 
-    if (!amount || !date || !period || !duration) {
-        alert('Please fill out all required fields.');
-        return;
+        if (!amount || !date || !period || !duration) {
+            alert('Please fill out all required fields.');
+            return;
+        }
+
+        if (!Array.isArray(window.rentalPayments)) {
+            window.rentalPayments = [];
+        }
+
+        const newPayment = {
+            tablePlace,
+            paymentDate: date,
+            rentalPeriod: period,
+            duration,
+            amount: parseFloat(amount),
+            comments
+        };
+
+        window.rentalPayments.push(newPayment);
+
+        saveData(); // POSTs to /save via your backend
+        closeRentalPaymentModal();
+        loadRentalPayments();
+    } catch (e) {
+        console.error('❌ Error in saveRentalPayment:', e);
+        alert('Failed to save rental payment. See console for details.');
     }
-
-    // Save to localStorage or any other storage logic here
-    console.log('Rental Payment Saved:', { tablePlace, amount, date, period, duration, comments });
-
-    closeRentalPaymentModal(); // Close modal after saving
 }
+
 
 // Update Rental Period and Duration based on selected start and end date
 function updateRentalPeriod() {
@@ -5288,8 +5345,7 @@ function closeEditRentalPaymentModal() {
 
 // Open Edit Rental Payment Modal
 function openEditRentalPaymentModal(index) {
-    const storedPayments = JSON.parse(localStorage.getItem('rentalPayments')) || [];
-    const payment = storedPayments[index];
+    const payment = window.rentalPayments?.[index];
     if (!payment) {
         alert('Error: Rental payment not found.');
         return;
@@ -5298,13 +5354,13 @@ function openEditRentalPaymentModal(index) {
     document.getElementById('editRentalPaymentIndex').value = index;
     document.getElementById('editRentalTablePlace').value = payment.tablePlace || '';
     document.getElementById('editRentalDate').value = payment.paymentDate ? formatDateForInput(payment.paymentDate) : '';
-    
-    // Parse rental period to set start and end dates
-    if (payment.rentalPeriod) {
+
+    if (payment.rentalPeriod?.includes(' - ')) {
         const [start, end] = payment.rentalPeriod.split(' - ');
         document.getElementById('editRentalPeriodStart').value = formatDateForInput(start);
         document.getElementById('editRentalPeriodEnd').value = formatDateForInput(end);
     }
+
     document.getElementById('editRentalPeriod').value = payment.rentalPeriod || '';
     document.getElementById('editRentalDuration').value = payment.duration || '';
     document.getElementById('editRentalAmount').value = payment.amount || '';
@@ -5314,6 +5370,7 @@ function openEditRentalPaymentModal(index) {
     const modal = document.getElementById('editRentalPaymentModal');
     if (modal) modal.style.display = 'block';
 }
+
 
 // Update Rental Period and Duration for Edit Modal
 function updateEditRentalPeriod() {
@@ -5351,7 +5408,6 @@ function saveEditedRentalPayment() {
         return;
     }
 
-    // Validate dates
     const paymentDateObj = new Date(paymentDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -5367,43 +5423,62 @@ function saveEditedRentalPayment() {
         return;
     }
 
-    // Update payment object
+    if (!Array.isArray(window.rentalPayments)) {
+        console.error("No rentalPayments array available.");
+        return;
+    }
+
     const updatedPayment = {
         lineNumber: index + 1,
         tablePlace,
-        paymentDate: formatDate(new Date(paymentDate)),
+        paymentDate: formatDate(paymentDateObj),
         rentalPeriod,
         duration,
         amount,
         comments
     };
 
-    // Update localStorage
-    const storedPayments = JSON.parse(localStorage.getItem('rentalPayments')) || [];
-    storedPayments[index] = updatedPayment;
-    localStorage.setItem('rentalPayments', JSON.stringify(storedPayments));
+    try {
+        window.rentalPayments[index] = updatedPayment;
 
-    // Refresh table
-    loadRentalPayments();
-    closeEditRentalPaymentModal();
+        // Update line numbers
+        window.rentalPayments.forEach((p, i) => p.lineNumber = i + 1);
+
+        saveData();           // backend save
+        loadRentalPayments(); // reload UI
+        closeEditRentalPaymentModal();
+    } catch (e) {
+        console.error("❌ Failed to edit rental payment:", e);
+        alert("Error editing payment. See console for details.");
+    }
 }
+
 
 // Delete Rental Payment
 function deleteRentalPayment(index) {
-    if (!confirm('Are you sure you want to delete this rental payment?')) return;
+    if (!Array.isArray(window.rentalPayments)) {
+        console.warn('No rental payments to delete from.');
+        return;
+    }
 
-    const storedPayments = JSON.parse(localStorage.getItem('rentalPayments')) || [];
-    storedPayments.splice(index, 1);
+    if (!confirm("Are you sure you want to delete this rental payment?")) return;
 
-    // Update line numbers
-    storedPayments.forEach((payment, i) => {
-        payment.lineNumber = i + 1;
-    });
+    try {
+        window.rentalPayments.splice(index, 1); // Remove from array
 
-    localStorage.setItem('rentalPayments', JSON.stringify(storedPayments));
-    rentalPaymentCounter = storedPayments.length + 1;
-    loadRentalPayments();
+        // Recalculate line numbers
+        window.rentalPayments.forEach((payment, i) => {
+            payment.lineNumber = i + 1;
+        });
+
+        saveData();         // Save to backend
+        loadRentalPayments(); // Refresh table
+    } catch (e) {
+        console.error("❌ Failed to delete rental payment:", e);
+        alert("Failed to delete payment. See console for details.");
+    }
 }
+
 
 // Save Rental Payment
 function saveRentalPayment() {
@@ -5419,9 +5494,12 @@ function saveRentalPayment() {
         return;
     }
 
-    // Create a new rental payment object
-    const rentalPayment = {
-        lineNumber: 0, // Will be updated by loadRentalPayments
+    if (!Array.isArray(window.rentalPayments)) {
+        window.rentalPayments = [];
+    }
+
+    const newPayment = {
+        lineNumber: window.rentalPayments.length + 1,
         tablePlace,
         paymentDate: formatDate(new Date(date)),
         rentalPeriod: period,
@@ -5430,18 +5508,13 @@ function saveRentalPayment() {
         comments
     };
 
-    console.log('Saving new payment:', rentalPayment);
+    window.rentalPayments.push(newPayment);
 
-    // Save rental payments in localStorage
-    const storedPayments = JSON.parse(localStorage.getItem('rentalPayments')) || [];
-    storedPayments.push(rentalPayment);
-    localStorage.setItem('rentalPayments', JSON.stringify(storedPayments));
-
-    // Refresh table to apply sorting
-    loadRentalPayments();
-
-    // Close modal after saving
+    saveData();            // 🔁 Save full app state to backend
+    loadRentalPayments();  // ♻️ Update table
     closeRentalPaymentModal();
+
+    console.log('✅ Rental Payment saved to backend:', newPayment);
 }
 
 // Update Rental Period and Duration based on selected start and end date
@@ -5509,8 +5582,10 @@ function setDateLimits() {
 
 // Load rental payments from localStorage and display them in the table
 function loadRentalPayments() {
+console.log("🔁 loadRentalPayments: window.rentalPayments =", window.rentalPayments);
+
     try {
-        const storedPayments = JSON.parse(localStorage.getItem('rentalPayments')) || [];
+        const storedPayments = Array.isArray(window.rentalPayments) ? window.rentalPayments : [];
         const table = document.getElementById('rentalPaymentTable').getElementsByTagName('tbody')[0];
         if (!table) {
             console.error('Table body not found for rentalPaymentTable');
@@ -5519,7 +5594,7 @@ function loadRentalPayments() {
         }
         table.innerHTML = '';
 
-        console.log('Loaded payments from localStorage:', storedPayments);
+        console.log('✅ Rental Payments loaded from backend state:', storedPayments);
 
         // Sort payments by paymentDate in descending order
         storedPayments.sort((a, b) => {
@@ -5589,9 +5664,7 @@ function loadRentalPayments() {
             }
         });
 
-        // Save updated lineNumber values to localStorage
-        localStorage.setItem('rentalPayments', JSON.stringify(storedPayments));
-        rentalPaymentCounter = storedPayments.length + 1;
+              rentalPaymentCounter = storedPayments.length + 1;
     } catch (e) {
         console.error('Error in loadRentalPayments:', e);
         alert('Failed to load rental payments. Check the console for details.');
@@ -5599,9 +5672,12 @@ function loadRentalPayments() {
 }
 
 // Load rental payments when the page loads
-window.onload = function() {
-    loadRentalPayments();
-};
+function onAppReady() {
+   
+    // Any other things you want after data/UI is ready
+}
+
+
 
 /* When the page finishes loading, pre-fill the Sale date box */
 document.addEventListener('DOMContentLoaded', () => {
@@ -5620,7 +5696,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- add a second panel that will host 3d_fabriek.html via iframe -->
   <div id="fabriekPanel" style="display:none; width:100%; height:100%;">
     <iframe
-      src="3d_fabriek.html"
+      src="/3d"
       frameborder="0"
       scrolling="yes"
       style="width:100%; height:100%;"
