@@ -1,7 +1,7 @@
 // — FILAMENT SUMMARY & <datalist> SETUP —
 // Build the summary of all filaments and fill <datalist id="filamentOptions">
 function updateSummary() {
-  const raw = JSON.parse(localStorage.getItem('filamentsData')||'[]');
+  const raw = window._filaments || [];
   const map = {};
   raw.forEach(o => {
     const key = `${o.brand}||${o.type}`;
@@ -34,11 +34,11 @@ function updateSummary() {
     dl.appendChild(opt);
   });
 
-  localStorage.setItem('filamentSummaryData', JSON.stringify(summary));
+  window._filamentSummary = summary;
 }
 function populateFilamentOptions(){
   // if you ever need to re-populate after manual summary edits
-  const summary = JSON.parse(localStorage.getItem('filamentSummaryData')||'[]');
+  const summary = window._filamentSummary || [];
   const dl = document.getElementById('filamentOptions');
   dl.innerHTML = '';
   summary.forEach(s => {
@@ -68,29 +68,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const tableBody   = document.querySelector('#printsStockTable tbody');
   const addBtn      = document.getElementById('addPrintBtn');
   const deleteBtn   = document.getElementById('deletePrintBtn');
-  const STORAGE_KEY = 'printsStockData';
 
   function savePrintsStock() {
     const data = Array.from(tableBody.rows).map(r => ({
       name:           r.cells[1].querySelector('input').value,
       description:    r.cells[2].querySelector('input').value,
-      qty:            parseFloat(r.cells[3].querySelector('input').value)||0,
-      weight:         parseFloat(r.cells[4].querySelector('input').value)||0,
+      qty:            parseFloat(r.cells[3].querySelector('input').value) || 0,
+      weight:         parseFloat(r.cells[4].querySelector('input').value) || 0,
       filament:       r.querySelector('input.print-filament').value,
-      avgPricePerKg:  parseFloat(r.dataset.avgPricePerKg)||0,
-      componentsCost: parseFloat(r.dataset.componentsCost)||0,
-      price:          parseFloat(r.cells[9].querySelector('input').value)||0,
+      avgPricePerKg:  parseFloat(r.dataset.avgPricePerKg) || 0,
+      componentsCost: parseFloat(r.dataset.componentsCost) || 0,
+      price:          parseFloat(r.cells[9].querySelector('input').value) || 0,
       checked:        r.cells[10].querySelector('input').checked
     }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  
+    fetch('/save/3d', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prints: data,
+        filaments: Array.from(document.querySelector('#filamentsTable tbody').rows).map(r => ({
+          date:        r.querySelector('input.fil-date')?.value || '',
+          orderNumber: r.querySelector('input.fil-order')?.value || '',
+          brand:       r.querySelector('input.fil-brand')?.value || '',
+          colour:      r.querySelector('input.fil-colour')?.value || '',
+          type:        r.querySelector('input.fil-type')?.value || '',
+          rollWeight:  +r.querySelector('input.fil-weight')?.value || 0,
+          qty:         +r.querySelector('input.fil-qty')?.value || 0,
+          price:       +r.querySelector('input.fil-price')?.value || 0
+        }))
+        
+      })
+      
+    })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.status === 'success') {
+          console.log('✅ Prints saved to backend');
+        } else {
+          console.error('❌ Error saving prints:', resp.message);
+          alert('Failed to save prints to backend.');
+        }
+      })
+      .catch(e => {
+        console.error('❌ Error saving prints:', e);
+        alert('Failed to save prints to backend.');
+      });
   }
+  
 
   function recalcProductionCost(r) {
     // ensure we have a frozen avgPricePerKg
     let avg = parseFloat(r.dataset.avgPricePerKg);
     if (isNaN(avg) || avg === 0) {
       const [brand,type] = r.querySelector('input.print-filament').value.split(' — ');
-      const summary = JSON.parse(localStorage.getItem('filamentSummaryData')||'[]');
+      const summary = window._filamentSummary || [];
       const entry   = summary.find(s=>s.brand===brand&&s.type===type);
       avg = entry ? entry.avgPricePerKg : 0;
       r.dataset.avgPricePerKg = avg;
@@ -182,10 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadPrintsStock() {
-    JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')
-      .forEach(it => createPrintRow(it));
-    updateDeleteState();
+    fetch('/data/3d')
+      .then(res => res.json())
+      .then(data => {
+        const items = Array.isArray(data.prints) ? data.prints : [];
+        window._prints = items;
+        items.forEach(createPrintRow);
+        updateDeleteState();
+        console.log(`✅ Loaded ${items.length} prints from backend`);
+      })
+      .catch(err => {
+        console.error('❌ Failed to load prints:', err);
+        alert('Failed to load prints data.');
+      });
   }
+  
 
   function renumber() {
     Array.from(tableBody.rows).forEach((r,i)=> r.cells[0].textContent = i+1);
@@ -222,25 +265,63 @@ document.addEventListener('DOMContentLoaded',()=>{
   const delBtn   = document.getElementById('deleteFilamentBtn');
   const KEY      = 'filamentsData';
 
-  function saveAll(){
-    const data = Array.from(tbody.rows).map(r=>({
+  function saveAll() {
+    const data = Array.from(tbody.rows).map(r => ({
       date:        r.querySelector('input.fil-date').value,
       orderNumber: r.querySelector('input.fil-order').value,
       brand:       r.querySelector('input.fil-brand').value,
       colour:      r.querySelector('input.fil-colour').value,
       type:        r.querySelector('input.fil-type').value,
-      rollWeight:  +r.querySelector('input.fil-weight').value||0,
-      qty:         +r.querySelector('input.fil-qty').value||0,
-      price:       +r.querySelector('input.fil-price').value||0
+      rollWeight:  +r.querySelector('input.fil-weight').value || 0,
+      qty:         +r.querySelector('input.fil-qty').value || 0,
+      price:       +r.querySelector('input.fil-price').value || 0
     }));
-    localStorage.setItem(KEY, JSON.stringify(data));
-    updateSummary();  // rebuild summary each time filaments change
+  
+    fetch('/filaments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+      if (result.status === 'success') {
+        console.log(`✅ Saved ${data.length} filament entries to backend`);
+        window._filaments = data;  // update in-memory source
+        updateSummary();           // regenerate summary
+        populateFilamentOptions(); // refresh <datalist> too
+      } else {
+        throw new Error(result.message || 'Unknown backend error');
+      }
+    })
+    .catch(err => {
+      console.error('❌ Failed to save filament data to backend:', err);
+      alert('Error saving filament data to backend.');
+    });
   }
+  
 
-  function loadAll(){
-    JSON.parse(localStorage.getItem(KEY)||'[]').forEach(it=>addRow(it));
-    updateDelete();
+  function loadAll() {
+    fetch('/filaments')
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) throw new Error('Expected an array from backend');
+        
+        window._filaments = data;        // <-- REQUIRED for updateSummary()
+        updateSummary();                 // <-- Populates the summary table
+        populateFilamentOptions();       // <-- Optional if needed elsewhere
+  
+        data.forEach(it => addRow(it));
+        updateDelete();
+  
+        console.log(`✅ Loaded ${data.length} filaments from backend`);
+      })
+      .catch(err => {
+        console.error('❌ Failed to load filaments from backend:', err);
+        alert('Error loading filament data from backend.');
+      });
   }
+  
+  
 
   function renumber(){
     Array.from(tbody.rows).forEach((r,i)=> r.cells[0].textContent=i+1);

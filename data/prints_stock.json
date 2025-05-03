@@ -1,0 +1,24 @@
+[
+  {
+    "name": "test",
+    "description": "test",
+    "qty": 2,
+    "weight": 22,
+    "filament": "Bambu Lab \u2014 PLA Silk Dual Color",
+    "avgPricePerKg": 28.46,
+    "componentsCost": 1,
+    "price": 3,
+    "checked": false
+  },
+  {
+    "name": "test",
+    "description": "yesr",
+    "qty": 1,
+    "weight": 2,
+    "filament": "Bambu Lab \u2014 PETG HF",
+    "avgPricePerKg": 18.8,
+    "componentsCost": 2,
+    "price": 2,
+    "checked": false
+  }
+]

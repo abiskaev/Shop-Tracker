@@ -68,6 +68,51 @@ def save_data():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/data/3d')
+def load_3d_data():
+    filaments = []
+    prints = []
+    try:
+        with open('data/filaments.json') as f:
+            filaments = json.load(f)
+    except: pass
+    try:
+        with open('data/prints_stock.json') as f:
+            prints = json.load(f)
+    except: pass
+    return jsonify({'filaments': filaments, 'prints': prints})
+
+@app.route('/save/3d', methods=['POST'])
+def save_3d_data():
+    data = request.json
+    try:
+        with open('data/filaments.json', 'w') as f:
+            json.dump(data.get('filaments', []), f, indent=2)
+        with open('data/prints_stock.json', 'w') as f:
+            json.dump(data.get('prints', []), f, indent=2)
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+@app.route("/filaments")
+def get_filaments():
+    try:
+        with open("data/filaments.json") as f:
+            filaments = json.load(f)
+        return jsonify(filaments)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/filaments", methods=["POST"])
+def save_filaments():
+    try:
+        data = request.json or []
+        with open("data/filaments.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

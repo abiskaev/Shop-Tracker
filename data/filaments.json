@@ -1,0 +1,452 @@
+[
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Bronze",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Matte Charcoal",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Red",
+    "type": "PETG HF",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-21",
+    "orderNumber": "EN4286403861",
+    "brand": "Bambu Lab",
+    "colour": "Blue",
+    "type": "PETG HF",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 18.8
+  },
+  {
+    "date": "2024-11-28",
+    "orderNumber": "EN4289807461",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 28.43
+  },
+  {
+    "date": "2024-11-28",
+    "orderNumber": "EN4289807461",
+    "brand": "Bambu Lab",
+    "colour": "Hawaii (Blue-Green)",
+    "type": "PLA Silk Dual Color",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 28.46
+  },
+  {
+    "date": "2024-11-28",
+    "orderNumber": "EN4289807461",
+    "brand": "Bambu Lab",
+    "colour": "PLA Silk Dual Color",
+    "type": "PLA Silk Dual Color",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 28.46
+  },
+  {
+    "date": "2024-11-28",
+    "orderNumber": "EN4289807461",
+    "brand": "Bambu Lab",
+    "colour": "PLA Silk Dual Color",
+    "type": "PLA Silk Dual Color",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 28.46
+  },
+  {
+    "date": "2024-11-28",
+    "orderNumber": "EN4289807461",
+    "brand": "Bambu Lab",
+    "colour": "PLA Silk Dual Color",
+    "type": "PLA Silk Dual Color",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 28.46
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Yellow",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Hot Pink",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Blue",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.43
+  },
+  {
+    "date": "2025-04-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Red",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.43
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Orange",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Bambu Green",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2024-12-15",
+    "orderNumber": "EN4298516161",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Silver",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Cyan",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Purple",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-02",
+    "orderNumber": "EN42104883261",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 14.38
+  },
+  {
+    "date": "2025-01-28",
+    "orderNumber": "EN42113660061",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-01-28",
+    "orderNumber": "EN42113660061",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-01-28",
+    "orderNumber": "EN42113660061",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-03",
+    "orderNumber": "EN42115610061",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-03",
+    "orderNumber": "EN42115610061",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-03",
+    "orderNumber": "EN42115610061",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-06",
+    "orderNumber": "EN42116462761",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-06",
+    "orderNumber": "EN42116462761",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-06",
+    "orderNumber": "EN42116462761",
+    "brand": "Bambu Lab",
+    "colour": "Ivory White",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-20",
+    "orderNumber": "EN42120465561",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-02-20",
+    "orderNumber": "EN42120465561",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 3,
+    "price": 17.38
+  },
+  {
+    "date": "2025-03-15",
+    "orderNumber": "EN42126517161",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-03-15",
+    "orderNumber": "EN42126517161",
+    "brand": "Bambu Lab",
+    "colour": "Red",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 1,
+    "price": 17.38
+  },
+  {
+    "date": "2025-03-15",
+    "orderNumber": "EN42126517161",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-03-28",
+    "orderNumber": "EN42130460061",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-03-28",
+    "orderNumber": "EN42130460061",
+    "brand": "Bambu Lab",
+    "colour": "Jade White",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-04-06",
+    "orderNumber": "EN42133265961",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-04-06",
+    "orderNumber": "EN42133265961",
+    "brand": "Bambu Lab",
+    "colour": "Black",
+    "type": "PLA Basic",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  },
+  {
+    "date": "2025-04-13",
+    "orderNumber": "EN42135456161",
+    "brand": "Bambu Lab",
+    "colour": "Ivory White",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 18.9
+  },
+  {
+    "date": "2025-04-13",
+    "orderNumber": "EN42135456161",
+    "brand": "Bambu Lab",
+    "colour": "Desert Tan",
+    "type": "PLA Matte",
+    "rollWeight": 1000,
+    "qty": 2,
+    "price": 17.38
+  }
+]
