@@ -384,6 +384,13 @@ function showPanel(name) {
   }
 </style>
 
+<style>
+    #addPrintsTable td input[type="checkbox"] {
+      transform: scale(1.0);
+      margin: auto;
+      display: block;
+    }
+  </style>  
 
 </head>
 <body>
@@ -585,7 +592,7 @@ function showPanel(name) {
                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
            <div>
              <button onclick="openPurchaseModal()">Add Purchase</button>
-             <button id="addPrintsBtn">Add Prints</button>
+             <button id="openAddPrintsModalBtn">Add Prints</button>
            </div>
            <div>
              <button onclick="openManageSuppliersModal()">Manage Suppliers</button>
@@ -5690,25 +5697,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
-<!-- ✅ Add Prints Modal -->
-<div id="addPrintsModal" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width: 1000px;">
-      <h2>Add 3D Prints to Purchase</h2>
+<!-- Add Prints Modal -->
+<div id="addPrintsModal" class="modal">
+    <div class="modal-content">
+      <h2>Select 3D Prints</h2>
   
-      <label for="printsPurchaseDate">Date:</label>
-      <input type="date" id="printsPurchaseDate">
+      <label style="display: inline-block; margin-bottom: 10px;">
+        Date: <input type="date" id="addPrintsDate" style="width: 200px;" />
+      </label>
   
-      <table id="printsPurchaseTable" border="1" style="width:100%; margin-top: 10px;">
+      <table id="addPrintsTable" border="1" style="width: 100%; margin-top: 10px;">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Qty</th>
-            <th>Cost per Item (€)</th>
-            <th>Total Cost (€)</th>
-            <th>Price (€)</th>
-            <th>Chk</th>
+            <th>#</th><th>Name</th><th>Description</th>
+            <th>Qty</th><th>Cost per Item (€)</th><th>Total Cost (€)</th>
+            <th>Price (€)</th><th>Chk</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -5721,83 +5724,117 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
   
+  
   <script>
-  function openAddPrintsModal() {
-    const modal = document.getElementById('addPrintsModal');
-    const table = document.querySelector('#printsPurchaseTable tbody');
-    const dateInput = document.getElementById('printsPurchaseDate');
-    const confirmBtn = document.getElementById('confirmAddPrintsBtn');
-  
-    // Reset modal
-    table.innerHTML = '';
-    dateInput.value = new Date().toISOString().split('T')[0];
-    confirmBtn.disabled = true;
-  
-    // Get data from 3D prints (window._prints)
-    const prints = Array.isArray(window._prints) ? window._prints : [];
-    prints.forEach((p, i) => {
-      const tr = document.createElement('tr');
-  
-      const costTotal = parseFloat(p.productionCost || 0) + parseFloat(p.componentsCost || 0);
-      const qty = parseFloat(p.qty) || 1;
-      const costPerItem = qty > 0 ? costTotal / qty : 0;
-  
-      tr.innerHTML = `
-        <td>${i+1}</td>
-        <td>${p.name || ''}</td>
-        <td>${p.description || ''}</td>
-        <td>${qty}</td>
-        <td>${costPerItem.toFixed(2)}</td>
-        <td>${costTotal.toFixed(2)}</td>
-        <td>${p.price || ''}</td>
-        <td><input type="checkbox" class="print-select" onchange="updateConfirmButtonState()"></td>
-      `;
-  
-      table.appendChild(tr);
-    });
-  
-    modal.style.display = 'block';
-  }
-  
-  function closeAddPrintsModal() {
-    document.getElementById('addPrintsModal').style.display = 'none';
-  }
-  
-  function updateConfirmButtonState() {
-    const checked = document.querySelectorAll('#printsPurchaseTable .print-select:checked');
-    document.getElementById('confirmAddPrintsBtn').disabled = checked.length === 0;
-  }
-  
-  function confirmAddPrints() {
-    const rows = document.querySelectorAll('#printsPurchaseTable tbody tr');
-    const selected = [];
-    const date = document.getElementById('printsPurchaseDate').value || '01/01/2025';
-  
-    rows.forEach(row => {
-      const chk = row.querySelector('input[type="checkbox"]');
-      if (chk.checked) {
-        const cells = row.children;
-        selected.push({
-          date,
-          supplier: '3D_Fabriek',
-          orderNumber: null, // Will be set later
-          description: cells[2].textContent.trim(),
-          name: cells[1].textContent.trim(),
-          qty: parseFloat(cells[3].textContent) || 1,
-          costPerItem: parseFloat(cells[4].textContent) || 0,
-          cost: parseFloat(cells[5].textContent) || 0,
-          price: parseFloat(cells[6].textContent) || 0,
-          category: '3D Prints'
+    document.getElementById('openAddPrintsModalBtn').addEventListener('click', openAddPrintsModal);
+    
+    function openAddPrintsModal() {
+      const modal = document.getElementById('addPrintsModal');
+      const tbody = modal.querySelector('tbody');
+      const dateInput = document.getElementById('addPrintsDate');
+      const confirmBtn = document.getElementById('confirmAddPrintsBtn');
+    
+      tbody.innerHTML = '';
+      confirmBtn.disabled = true;
+      dateInput.value = new Date().toISOString().split('T')[0];
+    
+      const prints = (window._prints || []).map((p, i) => {
+        const cost = (parseFloat(p.productionCost) || 0) + (parseFloat(p.componentsCost) || 0);
+        const costPerItem = cost / (p.qty || 1);
+        return { ...p, totalCost: cost.toFixed(2), costPerItem: costPerItem.toFixed(2), index: i + 1 };
+      });
+    
+      prints.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.index}</td>
+          <td>${p.name || ''}</td>
+          <td>${p.description || ''}</td>
+          <td>${p.qty}</td>
+          <td>${p.costPerItem}</td>
+          <td>${p.totalCost}</td>
+          <td>${p.price}</td>
+          <td style="text-align: center;">
+            <input type="checkbox" class="addPrintsCheck" style="width: 18px; height: 18px; visibility: visible;">
+            </td>
+
+        `;
+        tbody.appendChild(row);
+      });
+    
+      tbody.querySelectorAll('.addPrintsCheck').forEach(chk => {
+        chk.addEventListener('change', () => {
+          confirmBtn.disabled = !tbody.querySelector('.addPrintsCheck:checked');
         });
-      }
+      });
+    
+      modal.style.display = 'block';
+    }
+    
+    function closeAddPrintsModal() {
+      document.getElementById('addPrintsModal').style.display = 'none';
+    }
+    
+    function confirmAddPrints() {
+  if (!Array.isArray(transactions)) transactions = [];
+
+  const rawDate = document.getElementById('addPrintsDate').value;
+  if (!rawDate) return;
+
+  const [yyyy, mm, dd] = rawDate.split('-');
+  const date = `${dd}/${mm}/${yyyy}`;
+
+  const table = document.getElementById('addPrintsTable').querySelector('tbody');
+  const checkedRows = table.querySelectorAll('input[type="checkbox"]:checked');
+  if (!checkedRows.length) return;
+
+  const orderNumber = getNextOrderNumber().toString();
+
+  checkedRows.forEach(row => {
+    const cells = row.closest('tr').cells;
+    const qty = +cells[3]?.textContent.trim() || 0;
+    const costPerItem = +cells[4]?.textContent.trim() || 0;
+    const cost = +cells[5]?.textContent.trim() || 0;
+    const price = +cells[6]?.textContent.trim() || 0;
+    const item = cells[2]?.textContent.trim();
+    const mijnTafelName = cells[1]?.textContent.trim();
+
+    if (!item || !mijnTafelName || !qty || !cost) {
+      console.warn("❌ Skipped invalid print row:", row);
+      return;
+    }
+
+    transactions.push({
+      type: 'purchase',
+      date,
+      supplier: "3D_Fabriek",
+      orderNumber,
+      discount: "",
+      item,
+      mijnTafelName,
+      qty,
+      costPerItem,
+      cost,
+      costAfterDiscount: cost,
+      itemNetCost: qty ? cost / qty : 0,
+      price,
+      category: "3D Prints",
+      total: cost  // ✅ THIS FIXES THE ISSUE
     });
-  
-    // 🔁 Apply order number logic (optional implementation needed)
-    window.addPrintsToPurchase(selected);
-  
-    closeAddPrintsModal();
-  }
-  </script>
+  });
+
+  saveData();
+  renderPurchaseHistoryTable();
+  closeAddPrintsModal();
+}
+
+
+function getNextOrderNumber() {
+  const nums = transactions.map(t => +t.orderNumber).filter(n => !isNaN(n));
+  return nums.length ? Math.max(...nums) + 1 : 1;
+}
+
+    </script>    
 
 <script>
     window.addPrintsToPurchase = function(prints) {
@@ -5835,7 +5872,160 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     </script>
     
+    <script>
+        function renderAddPrintsTable() {
+          const tbody = document.querySelector('#addPrintsTable tbody');
+          tbody.innerHTML = '';
+        
+          const prints = window._prints || [];
+          if (!Array.isArray(prints)) return;
+        
+          prints.forEach((p, index) => {
+            const row = tbody.insertRow();
+        
+            // #
+            row.insertCell().textContent = index + 1;
+            // Name
+            row.insertCell().textContent = p.name || '';
+            // Description
+            row.insertCell().textContent = p.description || '';
+            // Qty
+            row.insertCell().textContent = p.qty || 0;
+            // Cost per Item = Total Cost / Qty
+            const total = parseFloat(p.productionCost || 0) + parseFloat(p.componentsCost || 0);
+            const costPerItem = p.qty ? total / p.qty : 0;
+            row.insertCell().textContent = costPerItem.toFixed(2);
+            // Total Cost
+            row.insertCell().textContent = total.toFixed(2);
+            // Price
+            row.insertCell().textContent = p.price || 0;
+        
+            // Checkbox
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.dataset.index = index;
+            chk.addEventListener('change', updateAddPrintsBtnState);
+        
+            const chkCell = row.insertCell();
+            chkCell.appendChild(chk);
+          });
+        }
+        
+        function updateAddPrintsBtnState() {
+          const anyChecked = !!document.querySelector('#addPrintsTable tbody input[type="checkbox"]:checked');
+          document.getElementById('confirmAddPrintsBtn').disabled = !anyChecked;
+        }
+        </script>
+        
+        <script>
+            function preloadPrintsFromBackend() {
+              fetch('/data/3d')
+                .then(res => res.json())
+                .then(data => {
+                  const items = Array.isArray(data.prints) ? data.prints : [];
+                  window._prints = items;
+                  console.log(`✅ Loaded ${items.length} prints into memory`);
+                })
+                .catch(err => {
+                  console.error('❌ Failed to load prints:', err);
+                });
+            }
+          
+            // Run this when page loads
+            document.addEventListener('DOMContentLoaded', preloadPrintsFromBackend);
+          </script>
+          
+        <script>
+          
 
+function addPurchaseRow({ date, supplier, orderNumber, items }) {
+  if (!Array.isArray(items)) {
+    console.error("❌ Invalid or missing purchase items:", items);
+    return;
+  }
+
+  const tbody = document.getElementById("purchaseHistoryBody");
+
+  const costBeforeDiscount = items.reduce((sum, i) => sum + i.cost, 0);
+  const discount = 0;
+  const totalCost = costBeforeDiscount - discount;
+
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${date}</td>
+    <td>${supplier}</td>
+    <td>${orderNumber}</td>
+    <td>${costBeforeDiscount.toFixed(2)}</td>
+    <td>${discount.toFixed(2)}</td>
+    <td>${totalCost.toFixed(2)}</td>
+    <td>
+      <button onclick="editPurchase(${orderNumber})">Edit</button>
+      <button onclick="deletePurchase(${orderNumber})">Delete</button>
+    </td>
+  `;
+  tbody.appendChild(row);
+
+  window._purchaseData = window._purchaseData || {};
+  window._purchaseData[orderNumber] = {
+    date,
+    supplier,
+    orderNumber,
+    items,
+    costBeforeDiscount,
+    discount,
+    totalCost
+  };
+}
+function renderPurchaseHistoryTable() {
+  const tbody = document.getElementById("purchaseHistoryBody");
+  tbody.innerHTML = '';
+
+  if (!Array.isArray(transactions)) return;
+
+  const grouped = {};
+
+  // Group transactions by order number
+  transactions.forEach(t => {
+    const key = `${t.date}||${t.supplier}||${t.orderNumber}`;
+    if (!grouped[key]) {
+      grouped[key] = {
+        date: t.date,
+        supplier: t.supplier,
+        orderNumber: t.orderNumber,
+        items: []
+      };
+    }
+    grouped[key].items.push(t);
+  });
+
+  Object.values(grouped).forEach(group => {
+    const costBeforeDiscount = group.items.reduce((sum, i) => sum + (i.cost || 0), 0);
+    const discount = 0;
+    const totalCost = costBeforeDiscount - discount;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${group.date}</td>
+      <td>${group.supplier}</td>
+      <td>${group.orderNumber}</td>
+      <td>${costBeforeDiscount.toFixed(2)}</td>
+      <td>${discount.toFixed(2)}</td>
+      <td>${totalCost.toFixed(2)}</td>
+      <td>
+        <button onclick="editPurchase(${group.orderNumber})">Edit</button>
+        <button onclick="deletePurchase(${group.orderNumber})">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  renderPurchaseHistoryTable();
+});
+
+
+        </script>
+          
 </div>
 
   <!-- add a second panel that will host 3d_fabriek.html via iframe -->

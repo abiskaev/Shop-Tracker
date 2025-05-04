@@ -65,7 +65,8 @@
     "Surprise Blind Bag Mini Resin Animals Mushroom Miniature": 50,
     "Luminous Miniature Animal Figurines Set, Resin Glow in The Dark": 65,
     "Perfect Gum Machine, Party Gifts, School Prizes Various Animal Toys": 24,
-    "Test": 10
+    "Test": 10,
+    "test": 2
   },
   "transactions": [
     {
@@ -1422,6 +1423,23 @@
       "qty": 10,
       "supplier": "AliExpress",
       "total": 45,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 1,
+      "costAfterDiscount": 1,
+      "costPerItem": 0.5,
+      "date": "04/05/2025",
+      "discount": "",
+      "item": "test",
+      "itemNetCost": 0.5,
+      "mijnTafelName": "test",
+      "orderNumber": "4",
+      "price": 3,
+      "qty": 2,
+      "supplier": "3D_Fabriek",
+      "total": 1,
       "type": "purchase"
     }
   ],
