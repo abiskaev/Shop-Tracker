@@ -5984,21 +5984,33 @@ function renderPurchaseHistoryTable() {
 
   const grouped = {};
 
-  // Group transactions by order number
-  transactions.forEach(t => {
-    const key = `${t.date}||${t.supplier}||${t.orderNumber}`;
-    if (!grouped[key]) {
-      grouped[key] = {
-        date: t.date,
-        supplier: t.supplier,
-        orderNumber: t.orderNumber,
-        items: []
-      };
-    }
-    grouped[key].items.push(t);
-  });
+  transactions
+    .filter(t => t.type === 'purchase')
+    .forEach(t => {
+      const key = `${t.date}||${t.supplier}||${t.orderNumber}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          date: t.date,
+          supplier: t.supplier,
+          orderNumber: t.orderNumber,
+          items: []
+        };
+      }
+      grouped[key].items.push(t);
+    });
 
-  Object.values(grouped).forEach(group => {
+  // Sort by date descending and take latest 10
+  const latestGroups = Object.values(grouped)
+    .sort((a, b) => {
+      const [da, db] = [a.date, b.date].map(d => {
+        const [dd, mm, yyyy] = d.split('/');
+        return new Date(`${yyyy}-${mm}-${dd}`);
+      });
+      return db - da;
+    })
+    .slice(0, 10);
+
+  latestGroups.forEach(group => {
     const costBeforeDiscount = group.items.reduce((sum, i) => sum + (i.cost || 0), 0);
     const discount = 0;
     const totalCost = costBeforeDiscount - discount;
@@ -6012,16 +6024,18 @@ function renderPurchaseHistoryTable() {
       <td>${discount.toFixed(2)}</td>
       <td>${totalCost.toFixed(2)}</td>
       <td>
-        <button onclick="editPurchase(${group.orderNumber})">Edit</button>
-        <button onclick="deletePurchase(${group.orderNumber})">Delete</button>
+        <button onclick="editPurchase('${group.orderNumber}')">Edit</button>
+        <button onclick="deletePurchase('${group.orderNumber}')">Delete</button>
       </td>
     `;
     tbody.appendChild(row);
   });
 }
-document.addEventListener('DOMContentLoaded', () => {
-  renderPurchaseHistoryTable();
-});
+
+
+document.addEventListener('DOMContentLoaded', renderPurchaseHistoryTable);
+
+
 
 
         </script>
