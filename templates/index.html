@@ -5739,7 +5739,8 @@ document.addEventListener('DOMContentLoaded', () => {
       dateInput.value = new Date().toISOString().split('T')[0];
     
       const prints = (window._prints || []).map((p, i) => {
-        const cost = (parseFloat(p.productionCost) || 0) + (parseFloat(p.componentsCost) || 0);
+        const productionCost = (p.avgPricePerKg || 0) * (p.weight || 0) / 1000 * (p.qty || 1);
+        const cost = productionCost + (parseFloat(p.componentsCost) || 0);
         const costPerItem = cost / (p.qty || 1);
         return { ...p, totalCost: cost.toFixed(2), costPerItem: costPerItem.toFixed(2), index: i + 1 };
       });
@@ -5750,7 +5751,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${p.index}</td>
           <td>${p.name || ''}</td>
           <td>${p.description || ''}</td>
-          <td>${p.qty}</td>
+          <td><input type="number" class="qtyInput" min="1" max="${p.qty}" value="${p.qty}" data-index="${p.index}" style="width: 60px;"></td>
           <td>${p.costPerItem}</td>
           <td>${p.totalCost}</td>
           <td>${p.price}</td>
@@ -5759,6 +5760,26 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
 
         `;
+        const qtyInput = row.querySelector('.qtyInput');
+        qtyInput.addEventListener('input', () => {
+        const qty = parseInt(qtyInput.value, 10) || 0;
+        const maxQty = parseInt(qtyInput.max, 10) || 0;
+
+        if (qty < 1 || qty > maxQty) return;
+
+        const avgPricePerKg = parseFloat(p.avgPricePerKg) || 0;
+        const weight = parseFloat(p.weight) || 0;
+        const componentsCost = parseFloat(p.componentsCost) || 0;
+
+        const productionCost = avgPricePerKg * weight / 1000 * qty;
+        const cost = productionCost + componentsCost;
+
+        const costPerItem = cost / qty;
+
+        // Update table cells
+        row.cells[4].textContent = costPerItem.toFixed(2);  // Cost per item
+        row.cells[5].textContent = cost.toFixed(2);         // Total cost
+        });
         tbody.appendChild(row);
       });
     
@@ -5792,9 +5813,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   checkedRows.forEach(row => {
     const cells = row.closest('tr').cells;
-    const qty = +cells[3]?.textContent.trim() || 0;
-    const costPerItem = +cells[4]?.textContent.trim() || 0;
-    const cost = +cells[5]?.textContent.trim() || 0;
+    const qtyInput = cells[3].querySelector('input');
+    const qty = parseInt(qtyInput?.value, 10) || 0;
+    const maxQty = parseInt(qtyInput?.max, 10);
+
+    if (qty <= 0 || qty > maxQty) {
+    console.warn("❌ Skipped due to invalid qty:", qty, "for row:", row);
+    return;
+    }
+    const total = +cells[5]?.textContent.trim() || 0;
+    const cost = qty > 0 ? total / qty : 0;
     const price = +cells[6]?.textContent.trim() || 0;
     const item = cells[2]?.textContent.trim();
     const mijnTafelName = cells[1]?.textContent.trim();
@@ -5805,26 +5833,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     transactions.push({
-      type: 'purchase',
-      date,
-      supplier: "3D_Fabriek",
-      orderNumber,
-      discount: "",
-      item,
-      mijnTafelName,
-      qty,
-      costPerItem,
-      cost,
-      costAfterDiscount: cost,
-      itemNetCost: qty ? cost / qty : 0,
-      price,
-      category: "3D Prints",
-      total: cost  // ✅ THIS FIXES THE ISSUE
+        category: "3D Prints",
+        cost,                  // ✅ unit cost
+        date,
+        item,
+        mijnTafelName,
+        orderNumber,
+        price,
+        qty,
+        supplier: "3D_Fabriek",
+        total,                 // ✅ total cost (qty * cost)
+        type: "purchase"
     });
   });
 
   saveData();
-  renderPurchaseHistoryTable();
+  updatePurchaseHistoryTable();
   closeAddPrintsModal();
 }
 
@@ -5976,66 +6000,9 @@ function addPurchaseRow({ date, supplier, orderNumber, items }) {
     totalCost
   };
 }
-function renderPurchaseHistoryTable() {
-  const tbody = document.getElementById("purchaseHistoryBody");
-  tbody.innerHTML = '';
-
-  if (!Array.isArray(transactions)) return;
-
-  const grouped = {};
-
-  transactions
-    .filter(t => t.type === 'purchase')
-    .forEach(t => {
-      const key = `${t.date}||${t.supplier}||${t.orderNumber}`;
-      if (!grouped[key]) {
-        grouped[key] = {
-          date: t.date,
-          supplier: t.supplier,
-          orderNumber: t.orderNumber,
-          items: []
-        };
-      }
-      grouped[key].items.push(t);
-    });
-
-  // Sort by date descending and take latest 10
-  const latestGroups = Object.values(grouped)
-    .sort((a, b) => {
-      const [da, db] = [a.date, b.date].map(d => {
-        const [dd, mm, yyyy] = d.split('/');
-        return new Date(`${yyyy}-${mm}-${dd}`);
-      });
-      return db - da;
-    })
-    .slice(0, 10);
-
-  latestGroups.forEach(group => {
-    const costBeforeDiscount = group.items.reduce((sum, i) => sum + (i.cost || 0), 0);
-    const discount = 0;
-    const totalCost = costBeforeDiscount - discount;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${group.date}</td>
-      <td>${group.supplier}</td>
-      <td>${group.orderNumber}</td>
-      <td>${costBeforeDiscount.toFixed(2)}</td>
-      <td>${discount.toFixed(2)}</td>
-      <td>${totalCost.toFixed(2)}</td>
-      <td>
-        <button onclick="editPurchase('${group.orderNumber}')">Edit</button>
-        <button onclick="deletePurchase('${group.orderNumber}')">Delete</button>
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
-}
 
 
 document.addEventListener('DOMContentLoaded', renderPurchaseHistoryTable);
-
-
 
 
         </script>
