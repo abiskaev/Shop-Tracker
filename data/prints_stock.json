@@ -20,5 +20,16 @@
     "componentsCost": 2,
     "price": 2,
     "checked": false
+  },
+  {
+    "name": "1",
+    "description": "1",
+    "qty": 1,
+    "weight": 1,
+    "filament": "1 \u2014 1",
+    "avgPricePerKg": 11,
+    "componentsCost": 1,
+    "price": 3,
+    "checked": false
   }
 ]

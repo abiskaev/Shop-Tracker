@@ -5690,6 +5690,151 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
+<!-- ✅ Add Prints Modal -->
+<div id="addPrintsModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 1000px;">
+      <h2>Add 3D Prints to Purchase</h2>
+  
+      <label for="printsPurchaseDate">Date:</label>
+      <input type="date" id="printsPurchaseDate">
+  
+      <table id="printsPurchaseTable" border="1" style="width:100%; margin-top: 10px;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Cost per Item (€)</th>
+            <th>Total Cost (€)</th>
+            <th>Price (€)</th>
+            <th>Chk</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+  
+      <div style="margin-top: 10px; text-align: right;">
+        <button onclick="closeAddPrintsModal()">Cancel</button>
+        <button id="confirmAddPrintsBtn" onclick="confirmAddPrints()" disabled>Add Prints</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  function openAddPrintsModal() {
+    const modal = document.getElementById('addPrintsModal');
+    const table = document.querySelector('#printsPurchaseTable tbody');
+    const dateInput = document.getElementById('printsPurchaseDate');
+    const confirmBtn = document.getElementById('confirmAddPrintsBtn');
+  
+    // Reset modal
+    table.innerHTML = '';
+    dateInput.value = new Date().toISOString().split('T')[0];
+    confirmBtn.disabled = true;
+  
+    // Get data from 3D prints (window._prints)
+    const prints = Array.isArray(window._prints) ? window._prints : [];
+    prints.forEach((p, i) => {
+      const tr = document.createElement('tr');
+  
+      const costTotal = parseFloat(p.productionCost || 0) + parseFloat(p.componentsCost || 0);
+      const qty = parseFloat(p.qty) || 1;
+      const costPerItem = qty > 0 ? costTotal / qty : 0;
+  
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td>${p.name || ''}</td>
+        <td>${p.description || ''}</td>
+        <td>${qty}</td>
+        <td>${costPerItem.toFixed(2)}</td>
+        <td>${costTotal.toFixed(2)}</td>
+        <td>${p.price || ''}</td>
+        <td><input type="checkbox" class="print-select" onchange="updateConfirmButtonState()"></td>
+      `;
+  
+      table.appendChild(tr);
+    });
+  
+    modal.style.display = 'block';
+  }
+  
+  function closeAddPrintsModal() {
+    document.getElementById('addPrintsModal').style.display = 'none';
+  }
+  
+  function updateConfirmButtonState() {
+    const checked = document.querySelectorAll('#printsPurchaseTable .print-select:checked');
+    document.getElementById('confirmAddPrintsBtn').disabled = checked.length === 0;
+  }
+  
+  function confirmAddPrints() {
+    const rows = document.querySelectorAll('#printsPurchaseTable tbody tr');
+    const selected = [];
+    const date = document.getElementById('printsPurchaseDate').value || '01/01/2025';
+  
+    rows.forEach(row => {
+      const chk = row.querySelector('input[type="checkbox"]');
+      if (chk.checked) {
+        const cells = row.children;
+        selected.push({
+          date,
+          supplier: '3D_Fabriek',
+          orderNumber: null, // Will be set later
+          description: cells[2].textContent.trim(),
+          name: cells[1].textContent.trim(),
+          qty: parseFloat(cells[3].textContent) || 1,
+          costPerItem: parseFloat(cells[4].textContent) || 0,
+          cost: parseFloat(cells[5].textContent) || 0,
+          price: parseFloat(cells[6].textContent) || 0,
+          category: '3D Prints'
+        });
+      }
+    });
+  
+    // 🔁 Apply order number logic (optional implementation needed)
+    window.addPrintsToPurchase(selected);
+  
+    closeAddPrintsModal();
+  }
+  </script>
+
+<script>
+    window.addPrintsToPurchase = function(prints) {
+      if (!Array.isArray(prints) || prints.length === 0) return;
+    
+      const history = window.transactions || [];
+      const nextOrderNum = (() => {
+        const existing = history.filter(t => t.type === 'purchase' && t.orderNumber)
+          .map(t => parseInt(t.orderNumber)).filter(n => !isNaN(n));
+        return existing.length > 0 ? Math.max(...existing) + 1 : 1;
+      })();
+    
+      const newPurchases = prints.map(p => ({
+        type: 'purchase',
+        date: p.date,
+        supplier: p.supplier,
+        orderNumber: nextOrderNum.toString(),
+        discount: '', // blank
+        item: p.description,
+        name: p.name,
+        qty: p.qty,
+        costPerItem: p.costPerItem,
+        cost: p.cost,
+        costAfterDiscount: p.cost, // same as cost
+        netCost: p.cost,           // same as cost
+        price: p.price,
+        category: p.category
+      }));
+    
+      // Add to memory + save + refresh UI
+      window.transactions = [...history, ...newPurchases];
+      saveData();           // this should exist in your script
+      updatePurchaseUI();   // if it exists to refresh tables
+      console.log(`✅ Added ${newPurchases.length} print(s) as purchase(s)`);
+    };
+    </script>
+    
 
 </div>
 
