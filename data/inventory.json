@@ -65,7 +65,9 @@
     "Surprise Blind Bag Mini Resin Animals Mushroom Miniature": 50,
     "Luminous Miniature Animal Figurines Set, Resin Glow in The Dark": 65,
     "Perfect Gum Machine, Party Gifts, School Prizes Various Animal Toys": 24,
-    "Test": 10
+    "Test": 10,
+    "Test 4": 5,
+    "Test 3": 8
   },
   "transactions": [
     {
@@ -1435,6 +1437,84 @@
       "qty": 5,
       "supplier": "3D_Fabriek",
       "total": 4.83,
+      "type": "purchase"
+    },
+    {
+      "type": "purchase",
+      "item": "Test 3",
+      "mijnTafelName": "Test 3",
+      "qty": 8,
+      "cost": 0.876,
+      "total": 7.008,
+      "price": 6,
+      "date": "05/05/2025",
+      "supplier": "3D_Fabriek",
+      "orderNumber": "5",
+      "category": "3D Prints"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 2.04,
+      "date": "05/05/2025",
+      "item": "yesr",
+      "mijnTafelName": "test",
+      "orderNumber": "6",
+      "price": 2,
+      "qty": 1,
+      "supplier": "3D_Fabriek",
+      "total": 2.04,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.21000000000000002,
+      "date": "05/05/2025",
+      "item": "1",
+      "mijnTafelName": "1",
+      "orderNumber": "6",
+      "price": 3,
+      "qty": 10,
+      "supplier": "3D_Fabriek",
+      "total": 2.1,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.876,
+      "date": "05/05/2025",
+      "item": "Test 3",
+      "mijnTafelName": "Test 3",
+      "orderNumber": "6",
+      "price": 6,
+      "qty": 5,
+      "supplier": "3D_Fabriek",
+      "total": 4.38,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 1.048,
+      "date": "05/05/2025",
+      "item": "Test 4",
+      "mijnTafelName": "Test 4",
+      "orderNumber": "6",
+      "price": 8,
+      "qty": 5,
+      "supplier": "3D_Fabriek",
+      "total": 5.24,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 1.1622222222222223,
+      "date": "05/05/2025",
+      "item": "Test 5",
+      "mijnTafelName": "Test 5",
+      "orderNumber": "6",
+      "price": 0,
+      "qty": 9,
+      "supplier": "3D_Fabriek",
+      "total": 10.46,
       "type": "purchase"
     }
   ],
