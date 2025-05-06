@@ -1,57 +1,24 @@
 [
   {
-    "name": "test",
-    "description": "yesr",
-    "qty": 1,
-    "weight": 2,
-    "filament": "Bambu Lab \u2014 PETG HF",
-    "avgPricePerKg": 18.8,
-    "componentsCost": 2,
-    "price": 2,
-    "checked": false
-  },
-  {
-    "name": "1",
-    "description": "1",
+    "name": "Flexi Otter",
+    "description": "Flexi Otter - 2 colour: Desert Tan and Black",
     "qty": 10,
-    "weight": 10,
-    "filament": "1 \u2014 1",
-    "avgPricePerKg": 11,
-    "componentsCost": 1,
-    "price": 3,
-    "checked": false
-  },
-  {
-    "name": "Test 3",
-    "description": "Test 3",
-    "qty": 5,
-    "weight": 50,
+    "weight": 13,
     "filament": "Bambu Lab \u2014 PLA Matte",
     "avgPricePerKg": 17.510909090909088,
-    "componentsCost": 0,
-    "price": 6,
+    "componentsCost": 1,
+    "price": 2.5,
     "checked": false
   },
   {
-    "name": "Test 4",
-    "description": "Test 4",
-    "qty": 5,
-    "weight": 15,
+    "name": "Goudse Kaas",
+    "description": "Goudse Kaas - 1 colour: Yellow",
+    "qty": 10,
+    "weight": 13,
     "filament": "Bambu Lab \u2014 PLA Basic",
     "avgPricePerKg": 16.573225806451614,
-    "componentsCost": 4,
-    "price": 8,
-    "checked": false
-  },
-  {
-    "name": "Test 5",
-    "description": "Test 5",
-    "qty": 9,
-    "weight": 50,
-    "filament": "Bambu Lab \u2014 PETG HF",
-    "avgPricePerKg": 18.8,
-    "componentsCost": 2,
-    "price": 0,
+    "componentsCost": 0,
+    "price": 2,
     "checked": false
   }
 ]

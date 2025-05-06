@@ -1,20 +1,38 @@
 [
   {
-    "amount": "100",
-    "comments": "Test3",
-    "duration": "14",
+    "amount": "90.25",
+    "comments": "4 weeks",
+    "duration": "23",
     "lineNumber": 1,
-    "paymentDate": "01/05/2025",
-    "rentalPeriod": "30/04/2025 - 17/05/2025",
-    "tablePlace": "111"
+    "paymentDate": "23/04/2025",
+    "rentalPeriod": "18/04/2025 - 20/05/2025",
+    "tablePlace": "19"
   },
   {
-    "amount": "3123",
-    "comments": "Test 2",
-    "duration": "8",
+    "amount": "50",
+    "comments": "4 weeks 1/2 table",
+    "duration": "20",
     "lineNumber": 2,
-    "paymentDate": "29/04/2025",
-    "rentalPeriod": "17/05/2025 - 28/05/2025",
-    "tablePlace": "222"
+    "paymentDate": "19/03/2025",
+    "rentalPeriod": "18/03/2025 - 12/04/2025",
+    "tablePlace": "19"
+  },
+  {
+    "amount": "285",
+    "comments": "12 weeks",
+    "duration": "60",
+    "lineNumber": 3,
+    "paymentDate": "12/02/2025",
+    "rentalPeriod": "15/02/2025 - 09/05/2025",
+    "tablePlace": "20"
+  },
+  {
+    "amount": "97.5",
+    "comments": "4 weeks",
+    "duration": "20",
+    "lineNumber": 4,
+    "paymentDate": "06/01/2025",
+    "rentalPeriod": "18/01/2025 - 14/02/2025",
+    "tablePlace": "20"
   }
 ]
