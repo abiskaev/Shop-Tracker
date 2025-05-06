@@ -100,7 +100,9 @@
     "Cute Koala Squishy": 2,
     "Soft And Squishy Dog": 2,
     "Cute Rabbit Series Brooch": 4,
-    "Goudse Kaas - 1 colour: Yellow": 2
+    "Goudse Kaas - 1 colour: Yellow": 2,
+    "Tulip earrings - 2 colours: Green and the other": 99,
+    "Flexi Otter - 2 colour: Desert Tan and Black": 10
   },
   "transactions": [
     {
@@ -2242,6 +2244,55 @@
       "tablePlace": "19",
       "total": 2,
       "type": "sale"
+    },
+    {
+      "date": "24/04/2025",
+      "item": "Tulip earrings - 2 colours: Green and the other",
+      "mijnTafelName": "Tulp oorbellen",
+      "price": 2.5,
+      "qty": 1,
+      "tablePlace": "20",
+      "total": 2.5,
+      "type": "sale"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.10830000000000001,
+      "date": "20/01/2025",
+      "item": "Tulip earrings - 2 colours: Green and the other",
+      "mijnTafelName": "Tulp oorbellen",
+      "orderNumber": "2",
+      "price": 2.5,
+      "qty": 100,
+      "supplier": "3D_Fabriek",
+      "total": 10.83,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.32799999999999996,
+      "date": "06/05/2025",
+      "item": "Flexi Otter - 2 colour: Desert Tan and Black",
+      "mijnTafelName": "Flexi Otter",
+      "orderNumber": "3",
+      "price": 2.5,
+      "qty": 10,
+      "supplier": "3D_Fabriek",
+      "total": 3.28,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.315,
+      "date": "23/04/2025",
+      "item": "Cute Flexi Orca - 2 colours: Black and White",
+      "mijnTafelName": "Cute Orka",
+      "orderNumber": "4",
+      "price": 3,
+      "qty": 10,
+      "supplier": "3D_Fabriek",
+      "total": 3.15,
+      "type": "purchase"
     }
   ],
   "writeOffs": [
