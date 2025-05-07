@@ -129,7 +129,8 @@
     "Capybara-Themed Gel Ink Rollerball Pen": 8,
     "Deluxe Organza Drawstring Gift Bags": 47,
     "Clicker keychain Squid Game - 3 colours: Black, white and another": 9,
-    "Anime Genshin Impact Lomo Cards": 88
+    "Anime Genshin Impact Lomo Cards": 88,
+    "Squid Game Table Game Set": 15
   },
   "transactions": [
     {
@@ -2127,19 +2128,6 @@
       "type": "purchase"
     },
     {
-      "category": "3D Prints",
-      "cost": 0.315,
-      "date": "23/04/2025",
-      "item": "Cute Flexi Orca - 2 colours: Black and White",
-      "mijnTafelName": "Cute Orka",
-      "orderNumber": "4",
-      "price": 3,
-      "qty": 10,
-      "supplier": "3D_Fabriek",
-      "total": 3.15,
-      "type": "purchase"
-    },
-    {
       "date": "06/05/2025",
       "item": "Cute Flexi Orca - 2 colours: Black and White",
       "mijnTafelName": "Cute Orka",
@@ -3072,6 +3060,32 @@
       "tablePlace": "20",
       "total": 1.5,
       "type": "sale"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.6140000000000001,
+      "date": "25/01/2025",
+      "item": "Squid Game Table Game Set",
+      "mijnTafelName": "Gonggi Koreaans Speelset",
+      "orderNumber": "6",
+      "price": 5,
+      "qty": 15,
+      "supplier": "3D_Fabriek",
+      "total": 9.21,
+      "type": "purchase"
+    },
+    {
+      "type": "purchase",
+      "item": "Cute Flexi Orca - 2 colours: Black and White",
+      "mijnTafelName": "Cute Orka",
+      "qty": 10,
+      "cost": 0.315,
+      "total": 3.15,
+      "price": 3,
+      "date": "23/04/2025",
+      "supplier": "3D_Fabriek",
+      "orderNumber": "4",
+      "category": "3D Prints"
     }
   ],
   "writeOffs": [

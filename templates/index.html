@@ -3298,6 +3298,23 @@ function updatePurchaseTotal() {
             totalGross += gross;
         }
 
+            // —— LIVE per-row discount & net cost —— 
+            rows.forEach((row, idx) => {
+            const { gross, qty } = grossCosts[idx];
+            // allocate discount by share of gross
+            const rowDiscount = totalGross > 0
+                ? (gross / totalGross) * orderDiscount
+                : 0;
+            const after    = gross - rowDiscount;
+            const netEach  = qty > 0 ? after / qty : 0;
+            // write into the two columns:
+            const discCell = row.querySelector('.discount');
+            const netCell  = row.querySelector('.net-cost');
+            if (discCell) discCell.textContent = euro.format(after);
+            if (netCell)  netCell.textContent  = euro.format(netEach);
+            });
+            // —— end live row update —— 
+
         // Apply order-level discount all at once
 	const finalTotalCost = Math.max(0, totalGross - orderDiscount);
 
@@ -3633,6 +3650,21 @@ function updateEditPurchaseTotal() {
             grossCosts.push({ gross, qty });
             totalGross += gross;
         }
+
+            // —— LIVE per-row discount & net cost —— 
+    rows.forEach((row, idx) => {
+      const { gross, qty } = grossCosts[idx];
+      const rowDiscount = totalGross > 0
+        ? (gross / totalGross) * orderDiscount
+        : 0;
+      const after    = gross - rowDiscount;
+      const netEach  = qty > 0 ? after / qty : 0;
+      const discCell = row.querySelector('.discount');
+      const netCell  = row.querySelector('.net-cost');
+      if (discCell) discCell.textContent = euro.format(after);
+      if (netCell)  netCell.textContent  = euro.format(netEach);
+    });
+    // —— end live row update —— 
 
        // Apply order-level discount all at once
 	const finalTotalCost = Math.max(0, totalGross - orderDiscount);

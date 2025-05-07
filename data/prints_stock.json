@@ -53,5 +53,16 @@
     "componentsCost": 1.64,
     "price": 2.75,
     "checked": false
+  },
+  {
+    "name": "Gonggi Koreaans Speelset",
+    "description": "Squid Game Table Game Set",
+    "qty": 15,
+    "weight": 31,
+    "filament": "Bambu Lab \u2014 PLA Basic",
+    "avgPricePerKg": 16.573225806451614,
+    "componentsCost": 1.5,
+    "price": 5,
+    "checked": false
   }
 ]
