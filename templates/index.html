@@ -2204,9 +2204,64 @@ function toggleMonthlySaveBtn(on) {
 }
 
 function monthlyCellEdited(el) {
-    monthlySalesDirty = true;
-    toggleMonthlySaveBtn(true);
+  // 1) your existing “dirty” flag + save button
+  monthlySalesDirty = true;
+  toggleMonthlySaveBtn(true);
+
+  // 2) recalc this row’s Total (cells[3]=Qty, [4]=Price, [5]=Total)
+  const row   = el.closest('tr');
+  const cells = row.cells;
+  const qtyIn  = cells[3].querySelector('input');
+  const prcIn  = cells[4].querySelector('input');
+  if (!qtyIn || !prcIn) return;        // guard
+  const qty   = parseFloat(qtyIn.value)   || 0;
+  const price = parseFloat(prcIn.value)   || 0;
+  const newTotal = qty * price;
+  if (cells[5]) cells[5].textContent = euro.format(newTotal);
+
+  // 3) recalc the Subtotal for this date group
+  const tbody = row.parentNode;
+  const rows  = Array.from(tbody.rows);
+  let i = rows.indexOf(row);
+  // walk back to the date header
+  while (i >= 0 && !rows[i].classList.contains('date-group-header')) {
+    i--;
+  }
+  if (i >= 0) {
+    let subSum = 0;
+    for (let j = i + 1; j < rows.length; j++) {
+      const r = rows[j];
+      // next header? stop.
+      if (r.classList.contains('date-group-header')) break;
+      // subtotal row? write it and stop.
+      if (r.cells[0].colSpan >= 5) {
+            // ✅ the subtotal amount lives in the *second* cell (index 1)
+            if (r.cells[1]) r.cells[1].textContent = euro.format(subSum);
+            break;
+        }
+
+      // otherwise it’s a data row—add its total
+      const txt = r.cells[5]?.textContent || '';
+      const val = parseFloat(txt.replace(/[^0-9\-,\.]/g, '').replace(',', '.')) || 0;
+      subSum += val;
+    }
+  }
+
+  // 4) (Optional) recalc the grand total at the bottom
+  const grandEl = document.getElementById('monthlySalesTotalSum');
+  if (grandEl) {
+    let grandSum = 0;
+    rows.forEach(r => {
+      if (r.classList.contains('date-group-header')) return;
+      if (r.cells[0].colSpan >= 5) return; // skip subtotals
+      const txt = r.cells[5]?.textContent || '';
+      const v   = parseFloat(txt.replace(/[^0-9\-,\.]/g, '').replace(',', '.')) || 0;
+      grandSum += v;
+    });
+    grandEl.textContent = euro.format(grandSum);
+  }
 }
+
 
 function deleteMonthlySale(index) {
     try {

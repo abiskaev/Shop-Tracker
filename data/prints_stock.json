@@ -42,5 +42,16 @@
     "componentsCost": 0,
     "price": 3,
     "checked": false
+  },
+  {
+    "name": "Sleutelhanger Squid Game",
+    "description": "Clicker keychain Squid Game - 3 colours: Black, white and another",
+    "qty": 12,
+    "weight": 11,
+    "filament": "Bambu Lab \u2014 PLA Basic",
+    "avgPricePerKg": 16.573225806451614,
+    "componentsCost": 1.64,
+    "price": 2.75,
+    "checked": false
   }
 ]
