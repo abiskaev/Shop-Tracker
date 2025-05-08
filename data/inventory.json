@@ -3122,30 +3122,30 @@
       "type": "sale"
     },
     {
-      "type": "purchase",
+      "category": "3D Prints",
+      "cost": 2.71473,
+      "date": "01/01/2025",
       "item": "Articulated 3D Printed Purple Flying Dragon Ornament with Gradient Color Wings",
       "mijnTafelName": "Paarse draak",
-      "qty": 1,
-      "cost": 2.71473,
-      "total": 2.71473,
-      "price": 4.5,
-      "date": "01/01/2025",
-      "supplier": "Temu",
       "orderNumber": "PO-141-21646827720231391",
-      "category": "3D Prints"
+      "price": 4.5,
+      "qty": 1,
+      "supplier": "Temu",
+      "total": 2.71473,
+      "type": "purchase"
     },
     {
-      "type": "purchase",
+      "category": "3D Prints",
+      "cost": 3.23935,
+      "date": "01/01/2025",
       "item": "3D Printed Snake & Surprise Egg Set with Articulated Joints",
       "mijnTafelName": "Slang in ei",
-      "qty": 1,
-      "cost": 3.23935,
-      "total": 3.23935,
-      "price": 6,
-      "date": "01/01/2025",
-      "supplier": "Temu",
       "orderNumber": "PO-141-21646827720231391",
-      "category": "3D Prints"
+      "price": 6,
+      "qty": 1,
+      "supplier": "Temu",
+      "total": 3.23935,
+      "type": "purchase"
     }
   ],
   "writeOffs": [

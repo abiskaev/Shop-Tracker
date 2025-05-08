@@ -1133,6 +1133,83 @@ function showPanel(name) {
     </div>
 </div>
 
+<!-- Item Details Modal -->
+<div id="itemDetailsModal" class="modal">
+    <div class="modal-content">
+      
+      <!-- 1) Header (two-column grid for alignment) -->
+        <div id="itemDetailsHeader"
+        style="
+        margin-bottom:1em;
+        display: grid;
+        grid-template-columns: max-content auto;
+        column-gap: 1em;
+        row-gap: 0.25em;
+        align-items: baseline;
+        ">
+        <div><strong>Item Name:</strong></div>
+        <div><span id="itemDetailsName"></span></div>
+
+        <div><strong>Mijn Tafel Name:</strong></div>
+        <div><span id="itemDetailsMijn"></span></div>
+
+        <div><strong>Current Qty:</strong></div>
+        <div><span id="itemDetailsQty"></span></div>
+        </div>
+
+  
+      <!-- 2) Purchases -->
+      <h4>Purchase History</h4>
+      <table id="itemDetailsPurchasesTable">
+        <thead>
+          <tr>
+            <th>Date</th><th>Supplier</th><th>Order Number</th>
+            <th>Qty</th><th>Net Cost (€)</th><th>Cost After Discount (€)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5" style="text-align:right;font-weight:bold">Subtotal:</td>
+            <td id="itemDetailsPurchaseSubtotal">€0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+  
+      <!-- 3) Sales -->
+      <h4>Sales History</h4>
+      <table id="itemDetailsSalesTable">
+        <thead>
+          <tr>
+            <th>Date</th><th>Qty</th><th>Price (€)</th>
+            <th>Total (€)</th><th>Gross Margin (€)</th><th>Table/Place</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align:right;font-weight:bold">Totals:</td>
+            <td id="itemDetailsSalesTotal">€0.00</td>
+            <td id="itemDetailsGrossMarginTotal">€0.00</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+  
+      <!-- 4) Cash Flow & Close -->
+      <div style="margin-top:1em; font-weight:bold;">
+        Item’s Cash Flow: <span id="itemDetailsCashFlow">€0.00</span>
+      </div>
+
+      <!-- Close button -->
+    <div style="margin-top:1em; text-align:left;">
+        <button onclick="closeModal('itemDetailsModal')">Close</button>
+      </div>
+  
+    </div>
+  </div>
+  
+
 <!-- Data Management Section -->
 
     <div class="tab" id="dataManagementSection">
@@ -4177,7 +4254,15 @@ function updateInventoryTable() {
                 const mijnName = relevantPurchases.length ? relevantPurchases[0].mijnTafelName : '';
                 const row = inventoryTableBody.insertRow();
                 row.innerHTML = `
-                    <td>${item || 'N/A'}</td>
+                    <td>
+                    <a href="javascript:"
+                        onclick="openItemDetailsModal(
+                            '${item.replace(/'/g,"\\'")}',
+                            '${mijnName.replace(/'/g,"\\'")}'
+                        )">
+                        ${item}
+                    </a>
+                    </td>
                     <td>${mijnName}</td>
                     <td>${currentQty}</td>
                     <td>${getPurchasedQuantity(item) || 0}</td>
@@ -4206,7 +4291,15 @@ function updateInventoryTable() {
                 const mijnNameSO = relevantPurchasesSO.length ? relevantPurchasesSO[0].mijnTafelName : '';
                 const row = soldOutTableBody.insertRow();
                 row.innerHTML = `
-                    <td>${itemName || 'N/A'}</td>
+                    <td>
+                    <a href="javascript:"
+                        onclick="openItemDetailsModal(
+                            '${itemName.replace(/'/g,"\\'")}',
+                            '${mijnNameSO.replace(/'/g,"\\'")}'
+                        )">
+                        ${itemName}
+                    </a>
+                    </td>
                     <td>${mijnNameSO}</td>
                     <td>0</td>
                     <td>${purchasedQty}</td>
@@ -6156,6 +6249,83 @@ function addPurchaseRow({ date, supplier, orderNumber, items }) {
 
 document.addEventListener('DOMContentLoaded', updatePurchaseHistoryTable);
 
+function openItemDetailsModal(itemName, mijnTafelName) {
+   // 1) Header — split into three fields
+   document.getElementById('itemDetailsName').textContent = itemName;
+  document.getElementById('itemDetailsMijn').textContent = mijnTafelName;
+  document.getElementById('itemDetailsQty').textContent  = inventory[itemName] || 0;
+
+  // 2) Purchases
+  const pRows = transactions
+    .filter(t => t.type==='purchase' && t.item===itemName)
+    .sort((a,b)=> parseEuropeanDate(a.date) - parseEuropeanDate(b.date));
+  const pBody = document.querySelector('#itemDetailsPurchasesTable tbody');
+  pBody.innerHTML = '';
+  let pSubtotal = 0;
+  pRows.forEach(p => {
+  // compute all purchase indices for this Order Number
+  const groupIndices = transactions.reduce((arr, t, i) => {
+    if (t.type==='purchase' && t.orderNumber === p.orderNumber) arr.push(i);
+    return arr;
+  }, []);
+  const netUnit = p.total / p.qty;
+  pSubtotal += p.total;
+  const r = pBody.insertRow();
+  r.innerHTML = `
+    <td>${p.date}</td>
+    <td>${p.supplier}</td>
+    <td>
+      <a href="javascript:"
+         onclick='openEditPurchaseModal(${JSON.stringify(groupIndices)})'>
+        ${p.orderNumber}
+      </a>
+    </td>
+    <td>${p.qty}</td>
+    <td>${euro.format(netUnit)}</td>
+    <td>${euro.format(p.total)}</td>
+  `;
+});
+
+  document.getElementById('itemDetailsPurchaseSubtotal')
+          .textContent = euro.format(pSubtotal);
+
+  // 3) Sales
+  const sRows = transactions
+    .filter(t => t.type==='sale' && t.item===itemName)
+    .sort((a,b)=> parseEuropeanDate(a.date) - parseEuropeanDate(b.date));
+  const sBody = document.querySelector('#itemDetailsSalesTable tbody');
+  sBody.innerHTML = '';
+  let sTotal = 0, gmTotal = 0;
+  sRows.forEach(s => {
+    const netUnitCost = (s.total / s.qty);
+    const grossM = (s.price - netUnitCost) * s.qty;
+    sTotal  += s.total;
+    gmTotal += grossM;
+    const r = sBody.insertRow();
+    r.innerHTML = `
+      <td>${s.date}</td>
+      <td>${s.qty}</td>
+      <td>${euro.format(s.price)}</td>
+      <td>${euro.format(s.total)}</td>
+      <td>${euro.format(grossM)}</td>
+      <td>${s.tablePlace||''}</td>
+    `;
+  });
+  document.getElementById('itemDetailsSalesTotal')
+          .textContent = euro.format(sTotal);
+  document.getElementById('itemDetailsGrossMarginTotal')
+          .textContent = euro.format(gmTotal);
+
+  // 4) Cash Flow
+  const cashFlow = sTotal - pSubtotal;
+  const cashEl   = document.getElementById('itemDetailsCashFlow');
+  cashEl.textContent = euro.format(cashFlow);
+  // color red if negative, green if positive
+  cashEl.style.color = cashFlow < 0 ? 'red' : 'green';
+
+  // Show it
+  document.getElementById('itemDetailsModal').style.display = 'block';
+}
 
 
 
