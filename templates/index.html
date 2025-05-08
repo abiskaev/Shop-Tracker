@@ -1181,14 +1181,17 @@ function showPanel(name) {
       <table id="itemDetailsSalesTable">
         <thead>
           <tr>
-            <th>Date</th><th>Qty</th><th>Price (€)</th>
+            <th>Date</th><th>Price (€)</th><th>Qty</th>
             <th>Total (€)</th><th>Gross Margin (€)</th><th>Table/Place</th>
           </tr>
         </thead>
         <tbody></tbody>
         <tfoot>
           <tr>
-            <td colspan="3" style="text-align:right;font-weight:bold">Totals:</td>
+                    <!-- now colspan=1 for the label, then an empty cell under Price -->
+           <td></td>
+           <td colspan="1" style="text-align:right;font-weight:bold">Totals:</td>
+           <td id="itemDetailsSalesTotalQty">0</td>
             <td id="itemDetailsSalesTotal">€0.00</td>
             <td id="itemDetailsGrossMarginTotal">€0.00</td>
             <td></td>
@@ -6250,7 +6253,9 @@ function addPurchaseRow({ date, supplier, orderNumber, items }) {
 document.addEventListener('DOMContentLoaded', updatePurchaseHistoryTable);
 
 function openItemDetailsModal(itemName, mijnTafelName) {
-   // 1) Header — split into three fields
+   // --> initialize sales aggregates
+    let qtyTotal = 0;
+    // 1) Header — split into three fields
    document.getElementById('itemDetailsName').textContent = itemName;
   document.getElementById('itemDetailsMijn').textContent = mijnTafelName;
   document.getElementById('itemDetailsQty').textContent  = inventory[itemName] || 0;
@@ -6297,20 +6302,39 @@ function openItemDetailsModal(itemName, mijnTafelName) {
   sBody.innerHTML = '';
   let sTotal = 0, gmTotal = 0;
   sRows.forEach(s => {
-    const netUnitCost = (s.total / s.qty);
+    // 1) accumulate qty
+    qtyTotal += s.qty;
+
+    // 2) find the most recent purchase net‐unit‐cost on or before the sale date
+    const prevPurchases = transactions
+      .filter(t => t.type==='purchase'
+                && t.item===itemName
+                && parseEuropeanDate(t.date) <= parseEuropeanDate(s.date))
+      .sort((a,b)=> parseEuropeanDate(b.date) - parseEuropeanDate(a.date));
+    const netUnitCost = prevPurchases.length
+      ? prevPurchases[0].total / prevPurchases[0].qty
+      : 0;
+
+    // 3) compute gross margin correctly
     const grossM = (s.price - netUnitCost) * s.qty;
     sTotal  += s.total;
     gmTotal += grossM;
+
+    // 4) render row with swapped Price/Qty columns
     const r = sBody.insertRow();
     r.innerHTML = `
       <td>${s.date}</td>
-      <td>${s.qty}</td>
       <td>${euro.format(s.price)}</td>
+      <td>${s.qty}</td>
       <td>${euro.format(s.total)}</td>
       <td>${euro.format(grossM)}</td>
       <td>${s.tablePlace||''}</td>
     `;
   });
+    // write out the new Qty total
+    document.getElementById('itemDetailsSalesTotalQty')
+            .textContent = qtyTotal;
+
   document.getElementById('itemDetailsSalesTotal')
           .textContent = euro.format(sTotal);
   document.getElementById('itemDetailsGrossMarginTotal')
