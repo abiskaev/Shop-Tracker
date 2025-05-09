@@ -3820,7 +3820,7 @@ function addEditItemRow() {
             <td><input class="mijn-tafel-name-input wide-input" placeholder="Mijn Tafel Name" type="text" list="mijnTafelNames" oninput="autoFillPurchaseFields(this, 'mijnTafelName'); populatePurchasePrice(this); populatePurchaseCategory(this)"></td>
             <td><input class="qty-input" type="number" min="1" value="1" oninput="updateEditPurchaseRow(this)"></td>
             <td><input class="cost-input" type="number" step="0.01" min="0" value="0" oninput="updateEditPurchaseRow(this)"></td>
-            <td class="total"><input class="total-input" type="number" step="0.01" min="0" value="0" oninput="updatePurchaseRow(this)"></td>
+            <td class="total"><input class="total-input" type="number" step="0.01" min="0" value="0" oninput="updateEditPurchaseRow(this)"></td>
             <td class="discount">€0.00</td>
             <td class="net-cost">€0.00</td>
             <td><input class="price-input" type="number" step="0.01" min="0" value="0"></td>
@@ -3937,6 +3937,7 @@ function saveEditedPurchase() {
         updateDashboard();
         updateCashFlowTable();
         closeModal('editPurchaseModal');
+        openAllPurchasesModal();
 
         // 8) Compute and show true net total
         const finalNetTotal = totalCostBeforeDiscount - orderDiscount;
