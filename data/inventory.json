@@ -147,7 +147,6 @@
     "Cute Koala Squishy": 2,
     "Soft And Squishy Dog": 2,
     "Cute Rabbit Series Brooch": 4,
-    "Flexi Otter - 2 colour: Desert Tan and Black": 10,
     "3D Printed Chameleon Model with Realistic Eyes - Green": 1,
     "Adorable Capybara Plush Toy": 2,
     "Capybara Bubble Blowing Keychain": 3,
@@ -160,7 +159,7 @@
     "Minimalist Black and White Cat Bead Rings": 8,
     "Capybara Erasable Gel Pens, 0.5mm Medium Point": 12,
     "Two Cute Black and White Cat Couple Bracelets": 3,
-    "Test 2": 10
+    "Flexi Otter - 2 colour: Desert Tan and Black": 10
   },
   "transactions": [
     {
@@ -4024,19 +4023,6 @@
     },
     {
       "category": "3D Prints",
-      "cost": 0.32799999999999996,
-      "date": "06/05/2025",
-      "item": "Flexi Otter - 2 colour: Desert Tan and Black",
-      "mijnTafelName": "Flexi Otter",
-      "orderNumber": "3",
-      "price": 2.5,
-      "qty": 10,
-      "supplier": "3D_Fabriek",
-      "total": 3.2799999999999994,
-      "type": "purchase"
-    },
-    {
-      "category": "3D Prints",
       "cost": 0.215,
       "date": "10/02/2025",
       "item": "Goudse Kaas - 1 colour: Yellow",
@@ -4410,6 +4396,19 @@
       "qty": 3,
       "supplier": "Temu",
       "total": 2.454908096584518,
+      "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.32799999999999996,
+      "date": "06/05/2025",
+      "item": "Flexi Otter - 2 colour: Desert Tan and Black",
+      "mijnTafelName": "Flexi Otter",
+      "orderNumber": "3",
+      "price": 2.5,
+      "qty": 10,
+      "supplier": "3D_Fabriek",
+      "total": 3.2799999999999994,
       "type": "purchase"
     }
   ],

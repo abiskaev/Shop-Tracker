@@ -3613,6 +3613,10 @@ function updatePurchaseHistoryTable() {
         cell.innerHTML = '<button onclick="openAllPurchasesModal()">View More</button>';
     }
    console.log("✅ Purchase table update complete.");
+   
+   // Keep Cash Flow up-to-date whenever the purchase history changes
+    updateCashFlowTable();
+    updateDashboard();
 
 }
 
@@ -3997,6 +4001,7 @@ function saveEditedPurchase() {
 
 function deletePurchaseGroup(originalIndices) {
     try {
+        console.log('⏳ deletePurchaseGroup called with indices:', originalIndices);
         // Validate indices array
         if (!Array.isArray(originalIndices) || originalIndices.length === 0) {
              alert("Error: Invalid purchase selection for deletion.");
@@ -4030,7 +4035,14 @@ function deletePurchaseGroup(originalIndices) {
         // Recalculate inventory and update UI
         recalculateInventory(); // Calls saveData, updates tables/lists
         updatePurchaseHistoryTable(); // Refresh history table
-        updateDashboard();
+       
+        // 2) Then update the dashboard—but catch any errors so it can't interrupt our flow
+        try {
+          updateDashboard();
+        } catch (err) {
+        console.error('Error in updateDashboard after delete:', err);
+        }
+         // ← Insert this line to auto-refresh Cash Flow
         updateCashFlowTable();
 
         alert('Purchase group deleted successfully.');
@@ -5280,11 +5292,13 @@ window.deletePurchaseGroup = function(indices) {
     }
     // Confirm deletion
     if (!confirm('Are you sure you want to delete this purchase order?')) return;
-    // Remove in descending order to avoid index shift
-    indices.sort((a,b) => b - a).forEach(i => transactions.splice(i, 1));
-    saveData();
-    updatePurchaseHistoryTable();
-    updateAllPurchasesTable();
+     // 1) Remove the transactions
+   indices.sort((a,b) => b - a).forEach(i => transactions.splice(i, 1));
+
+   // 2) Rebuild everything off the new data
+   recalculateInventory();          // runs saveData(), updates inventory tables, dashboard & cash-flow
+   updatePurchaseHistoryTable();    // refresh the tab’s Purchase History
+   updateAllPurchasesTable();       // if that modal is open, refresh it too
 };
 </script>
 
