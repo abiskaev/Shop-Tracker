@@ -3933,11 +3933,22 @@ function saveEditedPurchase() {
 
         // 7) Update UI & storage
         recalculateInventory();
-        updatePurchaseHistoryTable();
         updateDashboard();
         updateCashFlowTable();
         closeModal('editPurchaseModal');
-        openAllPurchasesModal();
+        // Only if the **All Purchases** modal is open, fully rebuild its table:
+        const phModal = document.getElementById('allPurchasesModal');
+        if (phModal && phModal.style.display === 'block') {
+        updateAllPurchasesTable();
+        }
+
+        // — Refresh Item Details modal if open —
+        const itemModal = document.getElementById('itemDetailsModal');
+        if (itemModal && itemModal.style.display === 'block') {
+        const name  = itemModal.dataset.itemName;
+        const tafel = itemModal.dataset.mijnTafelName;
+        openItemDetailsModal(name, tafel);
+        }
 
         // 8) Compute and show true net total
         const finalNetTotal = totalCostBeforeDiscount - orderDiscount;
@@ -6254,7 +6265,12 @@ function addPurchaseRow({ date, supplier, orderNumber, items }) {
 document.addEventListener('DOMContentLoaded', updatePurchaseHistoryTable);
 
 function openItemDetailsModal(itemName, mijnTafelName) {
-   // --> initialize sales aggregates
+    // Remember which item this modal is showing
+  const detailModal = document.getElementById('itemDetailsModal');
+  detailModal.dataset.itemName       = itemName;
+  detailModal.dataset.mijnTafelName  = mijnTafelName;
+   
+    // --> initialize sales aggregates
     let qtyTotal = 0;
     // 1) Header — split into three fields
    document.getElementById('itemDetailsName').textContent = itemName;
