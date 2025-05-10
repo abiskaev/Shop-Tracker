@@ -64,5 +64,38 @@
     "componentsCost": 1.5,
     "price": 5,
     "checked": false
+  },
+  {
+    "name": "Wolf",
+    "description": "Articulated Wolf - 1 colour",
+    "qty": 4,
+    "weight": 50,
+    "filament": "Bambu Lab \u2014 PLA Basic",
+    "avgPricePerKg": 16.573225806451614,
+    "componentsCost": 0,
+    "price": 6,
+    "checked": false
+  },
+  {
+    "name": "Paarse Vaas Groot",
+    "description": "Vase Polygonal 18 cm - 1 dual colour",
+    "qty": 1,
+    "weight": 87,
+    "filament": "Eryone \u2014 PLA Silk Dual Color",
+    "avgPricePerKg": 13.18,
+    "componentsCost": 0,
+    "price": 10,
+    "checked": false
+  },
+  {
+    "name": "Octopus",
+    "description": "Octopus Small - 1 colour",
+    "qty": 10,
+    "weight": 8,
+    "filament": "Bambu Lab \u2014 PLA Basic",
+    "avgPricePerKg": 16.573225806451614,
+    "componentsCost": 0,
+    "price": 1.5,
+    "checked": false
   }
 ]

@@ -6149,8 +6149,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // 1) Persist
   saveData();
+
+  // 2) Inventory
+  recalculateInventory();
+
+  // 3) Purchases + Dashboard + Cash Flow
   updatePurchaseHistoryTable();
+
+  // 4) Close modal
   closeAddPrintsModal();
 }
 

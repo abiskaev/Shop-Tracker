@@ -159,7 +159,8 @@
     "Minimalist Black and White Cat Bead Rings": 8,
     "Capybara Erasable Gel Pens, 0.5mm Medium Point": 12,
     "Two Cute Black and White Cat Couple Bracelets": 3,
-    "Flexi Otter - 2 colour: Desert Tan and Black": 10
+    "Flexi Otter - 2 colour: Desert Tan and Black": 10,
+    "Articulated Wolf - 1 colour": 3
   },
   "transactions": [
     {
@@ -4410,6 +4411,19 @@
       "supplier": "3D_Fabriek",
       "total": 3.2799999999999994,
       "type": "purchase"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.8275,
+      "date": "10/03/2025",
+      "item": "Articulated Wolf - 1 colour",
+      "mijnTafelName": "Wolf",
+      "orderNumber": "7",
+      "price": 6,
+      "qty": 4,
+      "supplier": "3D_Fabriek",
+      "total": 3.31,
+      "type": "purchase"
     }
   ],
   "writeOffs": [
@@ -4418,6 +4432,13 @@
       "cost": 0.29291666666666666,
       "date": "05/05/2025",
       "item": "Sanrio New Theme Keychain Mystery Box",
+      "qty": 1
+    },
+    {
+      "comment": "Stolen",
+      "cost": 0.8275,
+      "date": "10/05/2025",
+      "item": "Articulated Wolf - 1 colour",
       "qty": 1
     }
   ],
