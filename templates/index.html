@@ -1136,27 +1136,62 @@ function showPanel(name) {
 <!-- Item Details Modal -->
 <div id="itemDetailsModal" class="modal">
     <div class="modal-content">
-      
-      <!-- 1) Header (two-column grid for alignment) -->
-        <div id="itemDetailsHeader"
-        style="
-        margin-bottom:1em;
-        display: grid;
-        grid-template-columns: max-content auto;
-        column-gap: 1em;
-        row-gap: 0.25em;
-        align-items: baseline;
-        ">
-        <div><strong>Item Name:</strong></div>
-        <div><span id="itemDetailsName"></span></div>
+        <h3>Item Details</h3>
+      <!-- ── Header + Pricing Summary Table ── -->
+<!-- Item Details header + pricing summary (no borders + spacer) -->
+<table id="itemDetailsHeaderTable"
+       style="border:none; border-collapse:collapse; margin-bottom:1em; width:auto;">
+  <colgroup>
+    <!-- 1) Label column -->
+    <col style="width: max-content;">
+    <!-- 2) Value column -->
+    <col style="width: max-content;">
+    <!-- 3) Spacer column -->
+    <col style="width: 80px;">
+    <!-- 4) Pricing‐label column -->
+    <col style="width: max-content;">
+    <!-- 5) Pricing‐value column -->
+    <col style="width: max-content;">
+  </colgroup>
+  <tr>
+    <td style="border:none; padding:2px;"><strong>Item Name:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px;">
+      <span id="itemDetailsName"></span>
+    </td>
+    <td style="border:none;"></td>
+    <td style="border:none; padding:2px;"><strong>Proposed Price:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px; text-align:left;">
+      <span id="itemDetailsProposedPrice">€0.00</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="border:none; padding:2px;"><strong>Mijn Tafel Name:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px;">
+      <span id="itemDetailsMijn"></span>
+    </td>
+    <td style="border:none;"></td>
+    <td style="border:none; padding:2px;"><strong>Average Price:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px; text-align:left;">
+      <span id="itemDetailsAvgPrice">N/A</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="border:none; padding:2px;"><strong>Current Qty:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px;">
+      <span id="itemDetailsQty"></span>
+    </td>
+    <td style="border:none;"></td>
+    <td style="border:none; padding:2px;"><strong>Average Purchase Cost:</strong></td>
+    <td style="border:none; padding:2px 2px 2px 32px; text-align:left;">
+      <span id="itemDetailsAvgCost">€0.00</span>
+    </td>
+  </tr>
+</table>
 
-        <div><strong>Mijn Tafel Name:</strong></div>
-        <div><span id="itemDetailsMijn"></span></div>
 
-        <div><strong>Current Qty:</strong></div>
-        <div><span id="itemDetailsQty"></span></div>
-        </div>
 
+  
+  
   
       <!-- 2) Purchases -->
       <h4>Purchase History</h4>
@@ -6326,6 +6361,45 @@ function openItemDetailsModal(itemName, mijnTafelName) {
    document.getElementById('itemDetailsName').textContent = itemName;
   document.getElementById('itemDetailsMijn').textContent = mijnTafelName;
   document.getElementById('itemDetailsQty').textContent  = inventory[itemName] || 0;
+
+  // ── Compute & render Proposed/Avg prices ──
+
+  // 1) Proposed Price = most recent purchase.price
+  const propEl = document.getElementById('itemDetailsProposedPrice');
+  const pastPur = transactions
+    .filter(t => t.type === 'purchase' && t.item === itemName)
+    .sort((a,b) => parseEuropeanDate(b.date) - parseEuropeanDate(a.date));
+  const proposedPrice = pastPur.length ? (pastPur[0].price || 0) : 0;
+  propEl.textContent = euro.format(proposedPrice);
+
+  // 2) Average Price = weighted average of all sales.price
+  const avgEl = document.getElementById('itemDetailsAvgPrice');
+  const sales = transactions.filter(t => t.type === 'sale' && t.item === itemName);
+  if (!sales.length) {
+    avgEl.textContent = 'N/A';
+    avgEl.style.color   = '';
+  } else {
+    const totalRev = sales.reduce((s,v) => s + v.price * v.qty, 0);
+    const totalQty = sales.reduce((s,v) => s + v.qty, 0);
+    const avgPrice = totalQty > 0 ? totalRev / totalQty : 0;
+    // Round to 2 decimals before comparing
+    const avgRounded = Math.round(avgPrice * 100) / 100;
+    avgEl.textContent = euro.format(avgRounded);
+    // green if rounded-value ≥ proposedPrice, red otherwise
+    avgEl.style.color = avgRounded >= proposedPrice ? 'green' : 'red';
+
+  }
+
+  // 3) Average Purchase Cost = weighted average of purchase.total
+  const costEl = document.getElementById('itemDetailsAvgCost');
+  if (!pastPur.length) {
+    costEl.textContent = '€0.00';
+  } else {
+    const totalNetCost = pastPur.reduce((s,v) => s + (v.total || 0), 0);
+    const totalPurQty  = pastPur.reduce((s,v) => s + (v.qty   || 0), 0);
+    const avgCost      = totalPurQty > 0 ? totalNetCost / totalPurQty : 0;
+    costEl.textContent = euro.format(avgCost);
+  }
 
   // 2) Purchases
   const pRows = transactions
