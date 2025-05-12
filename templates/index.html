@@ -264,9 +264,7 @@ div.tab#dataManagementSection button:hover {
     #inventoryTable tr.filter-row th:nth-child(8),
     #soldOutTable th:nth-child(8),
     #soldOutTable td:nth-child(8),
-    #soldOutTable tr.filter-row th:nth-child(8) {
-      display: none !important;
-    }
+    #soldOutTable tr.filter-row th:nth-child(8),
   </style>
 
 
@@ -961,14 +959,26 @@ function showPanel(name) {
             <h3>In Stock</h3>
             <table id="inventoryTable">
                  <thead>
-                     <tr>
-                         <th>Item</th><th>Mijn Tafel Name</th>
-                         <th>Current Qty</th>
-                         <th>Purchased Qty</th>
-                         <th>Sold Qty</th>
-                         <th>Written-off Qty</th><th>Category</th>
-                     </tr>
-<tr class="filter-row"><th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="5" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="6" style="width:90%"></th></tr>
+                    <tr>
+                        <th>Item</th>
+                        <th>Mijn Tafel Name</th>
+                        <th>Price (€)</th>
+                        <th>Current Qty</th>
+                        <th>Purchased Qty</th>
+                        <th>Sold Qty</th>
+                        <th>Written-off Qty</th>
+                        <th>Category</th>
+                    </tr>
+                    <tr class="filter-row">
+                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="5" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="6" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="7" style="width:90%"></th>
+                    </tr>                 
                  </thead>
                  <tbody id="inventoryBody">
                       </tbody>
@@ -979,12 +989,22 @@ function showPanel(name) {
                <thead>
                    <tr>
                         <th>Item</th><th>Mijn Tafel Name</th>
+                        <th>Price (€)</th>
                         <th>Current Qty</th>
                         <th class="sortable" onclick="sortSoldOutTable('purchasedQty')">Purchased Qty <i class="fas fa-sort opacity-50 ml-1"></i></th>
                         <th class="sortable" onclick="sortSoldOutTable('soldQty')">Sold Qty <i class="fas fa-sort opacity-50 ml-1"></i></th>
                         <th class="sortable" onclick="sortSoldOutTable('writtenOffQty')">Written-off Qty <i class="fas fa-sort opacity-50 ml-1"></i></th><th>Category</th>
                     </tr>
-<tr class="filter-row"><th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="5" style="width:90%"></th><th><input type="text" placeholder="Filter" data-col-index="6" style="width:90%"></th></tr>
+                    <tr class="filter-row">
+                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="5" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="6" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="7" style="width:90%"></th>
+                    </tr>
                </thead>
                 <tbody id="soldOutBody">
                      </tbody>
@@ -1566,15 +1586,7 @@ function setDateLimits() {
         todayDate.setHours(0, 0, 0, 0);
         const today = getTodayStrLocal();
         console.log(`setDateLimits: Setting max date to ${today} 
-
-// Get the category for an item based on latest purchase
-function getCategoryForItem(item) {
-    const tx = transactions
-        .filter(t => t.type === 'purchase' && t.item === item && t.category)
-        .sort((a, b) => parseEuropeanDate(b.date) - parseEuropeanDate(a.date))[0];
-    return tx ? tx.category : '';
-}
-(${todayDate.toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam' })})`);
+        (${todayDate.toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam' })})`);
         const dateInputs = document.querySelectorAll('input[type="date"]');
         if (dateInputs.length === 0) {
             console.warn('setDateLimits: No date inputs found in DOM');
@@ -4323,6 +4335,15 @@ function getCategoryForItem(item) {
     return tx ? tx.category : '';
 }
 
+function getPriceForItem(item) {
+  // most recent purchase price
+  const tx = transactions
+    .filter(t => t.type==='purchase' && t.item===item && t.price != null)
+    .sort((a,b) => parseEuropeanDate(b.date) - parseEuropeanDate(a.date))[0];
+  return tx ? tx.price : 0;
+}
+
+
 function updateInventoryTable() {
     try {
         const inventoryTableBody = document.getElementById('inventoryBody');
@@ -4354,18 +4375,18 @@ function updateInventoryTable() {
                     </a>
                     </td>
                     <td>${mijnName}</td>
+                    <td>${euro.format(getPriceForItem(item) || 0)}</td>
                     <td>${currentQty}</td>
                     <td>${getPurchasedQuantity(item) || 0}</td>
                     <td>${getSoldQuantity(item) || 0}</td>
                     <td>${getWrittenOffQuantity(item) || 0}</td>
-                    <td>${getCategoryForItem(item)}</td>
                     <td>${getCategoryForItem(item)}</td>
                 `;
                 hasInventory = true;
             }
         });
         if (!hasInventory) {
-            inventoryTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No items currently in stock</td></tr>';
+            inventoryTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No items currently in stock</td></tr>';
         }
         // Populate Sold Out table
         let hasSoldOut = false;
@@ -4391,18 +4412,18 @@ function updateInventoryTable() {
                     </a>
                     </td>
                     <td>${mijnNameSO}</td>
+                    <td>${euro.format(getPriceForItem(itemName) || 0)}</td>
                     <td>0</td>
                     <td>${purchasedQty}</td>
                     <td>${soldQty}</td>
                     <td>${writtenOffQty}</td>
-                    <td>${getCategoryForItem(itemName)}</td>
                     <td>${getCategoryForItem(itemName)}</td>
                 `;
                 hasSoldOut = true;
             }
         });
         if (!hasSoldOut) {
-            soldOutTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No sold out items</td></tr>';
+            soldOutTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No sold out items</td></tr>';
         }
         console.log('Inventory & Sold Out tables updated');
     } catch (e) {
