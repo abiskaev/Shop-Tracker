@@ -544,6 +544,17 @@ function showPanel(name) {
 #dataManagementSection button:hover {
     background: #d0d0d0;
 }
+
+#inventoryTable,
+#soldOutTable {
+  table-layout: fixed;
+  width: 100%;      /* fill its container, whatever size that is */
+}
+
+#soldOutTable th.sortable {
+  cursor: pointer;
+}
+
     </style>
 
     <h1>Shop Tracker</h1>
@@ -958,7 +969,17 @@ function showPanel(name) {
         <div class="tab-content active">
             <h3>In Stock</h3>
             <table id="inventoryTable">
-                 <thead>
+                <colgroup>
+                    <col style="width: 25%;">   <!-- first column: 25% of the table’s width -->
+                    <col style="width: 21%;">   <!-- second column: 21% -->
+                    <col style="width: 9%;">   <!-- third column: 9% -->
+                    <col style="width: 9%;">   <!-- fourth column: 9% -->
+                    <col style="width: 9%;">   <!-- etc… -->
+                    <col style="width: 9%;">
+                    <col style="width: 9%;">
+                    <col style="width: 9%;">
+                  </colgroup> 
+                <thead>
                     <tr>
                         <th>Item</th>
                         <th>Mijn Tafel Name</th>
@@ -970,8 +991,8 @@ function showPanel(name) {
                         <th>Category</th>
                     </tr>
                     <tr class="filter-row">
-                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th>
-                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:98%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:95%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th>
@@ -986,18 +1007,47 @@ function showPanel(name) {
             <button onclick="openWriteOffModal()">Write-off</button>
             <h3>Sold Out / Zero Stock</h3>
             <table id="soldOutTable">
-               <thead>
-                   <tr>
-                        <th>Item</th><th>Mijn Tafel Name</th>
-                        <th>Price (€)</th>
-                        <th>Current Qty</th>
-                        <th class="sortable" onclick="sortSoldOutTable('purchasedQty')">Purchased Qty <i class="fas fa-sort opacity-50 ml-1"></i></th>
-                        <th class="sortable" onclick="sortSoldOutTable('soldQty')">Sold Qty <i class="fas fa-sort opacity-50 ml-1"></i></th>
-                        <th class="sortable" onclick="sortSoldOutTable('writtenOffQty')">Written-off Qty <i class="fas fa-sort opacity-50 ml-1"></i></th><th>Category</th>
-                    </tr>
+                <colgroup>
+                    <col style="width: 25%;">   <!-- first column: 25% of the table’s width -->
+                    <col style="width: 21%;">   <!-- second column: 21% -->
+                    <col style="width: 9%;">   <!-- third column: 9% -->
+                    <col style="width: 9%;">   <!-- fourth column: 9% -->
+                    <col style="width: 9%;">   <!-- etc… -->
+                    <col style="width: 9%;">
+                    <col style="width: 9%;">
+                    <col style="width: 9%;">
+                  </colgroup> 
+                <thead>
+                    <tr>
+                        <th class="sortable" onclick="sortSoldOutTable('item')">
+                          Item <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('mijnTafelName')">
+                          Mijn Tafel Name <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('price')">
+                          Price (€) <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('currentQty')">
+                          Current Qty <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('purchasedQty')">
+                          Purchased Qty <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('soldQty')">
+                          Sold Qty <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('writtenOffQty')">
+                          Written-off Qty <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                        <th class="sortable" onclick="sortSoldOutTable('category')">
+                          Category <i class="fas fa-sort opacity-50 ml-1"></i>
+                        </th>
+                      </tr>
+                      
                     <tr class="filter-row">
-                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:90%"></th>
-                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:90%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="0" style="width:98%"></th>
+                        <th><input type="text" placeholder="Filter" data-col-index="1" style="width:95%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="2" style="width:90%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="3" style="width:90%"></th>
                         <th><input type="text" placeholder="Filter" data-col-index="4" style="width:90%"></th>
@@ -4437,27 +4487,39 @@ function updateInventoryTable() {
 
 
 function getSortedSoldOutItems() {
-     // Returns an array of {item, purchasedQty, soldQty, writtenOffQty} objects, sorted
-     const items = Object.keys(soldOutItems).map(item => ({
-        item,
-        purchasedQty: getPurchasedQuantity(item) || 0,
-        soldQty: getSoldQuantity(item) || 0,
-        writtenOffQty: getWrittenOffQuantity(item) || 0
-    }));
+  const items = Object.keys(soldOutItems).map(item => {
+    // grab the latest purchase for price & mijnTafelName
+    const recent = transactions
+      .filter(t => t.type === 'purchase' && t.item === item && t.mijnTafelName)
+      .sort((a,b)=>parseEuropeanDate(b.date)-parseEuropeanDate(a.date))[0] || {};
+    return {
+      item,
+      mijnTafelName: recent.mijnTafelName || '',
+      price:         recent.price         || 0,
+      currentQty:    0,                    // always zero in sold-out
+      purchasedQty:  getPurchasedQuantity(item)   || 0,
+      soldQty:       getSoldQuantity(item)        || 0,
+      writtenOffQty: getWrittenOffQuantity(item)  || 0,
+      category:      getCategoryForItem(item)     || ''
+    };
+  });
 
-    if (soldOutSortColumn) {
-         items.sort((a, b) => {
-            const valueA = a[soldOutSortColumn];
-            const valueB = b[soldOutSortColumn];
-            // Simple numeric comparison
-            const comparison = valueA - valueB;
-            return soldOutSortDirection === 'asc' ? comparison : -comparison;
-        });
-    } else {
-         items.sort((a, b) => a.item.localeCompare(b.item)); // Default sort by item name alpha
-    }
-    return items;
+  if (soldOutSortColumn) {
+    items.sort((a, b) => {
+      let va = a[soldOutSortColumn], vb = b[soldOutSortColumn];
+      // if strings, do localeCompare; else numeric
+      if (typeof va === 'string') {
+        const cmp = va.localeCompare(vb);
+        return soldOutSortDirection==='asc'? cmp : -cmp;
+      } else {
+        const cmp = va - vb;
+        return soldOutSortDirection==='asc'? cmp : -cmp;
+      }
+    });
+  }
+  return items;
 }
+
 
 function sortSoldOutTable(column) {
     try {
