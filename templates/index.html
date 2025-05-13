@@ -555,6 +555,11 @@ function showPanel(name) {
   cursor: pointer;
 }
 
+#renameItemInput,
+#renameMijnInput {
+  width: auto !important;
+}
+
     </style>
 
     <h1>Shop Tracker</h1>
@@ -1327,7 +1332,7 @@ function showPanel(name) {
         <label for="renameMijnInput">Mijn Tafel Name:</label>
         <input id="renameMijnInput" type="text" />
       </div>
-      <div style="margin-top:1em; text-align:right;">
+      <div style="margin-top:1em; text-align:left;">
         <button id="saveRenameBtn">Save Changes</button>
         <button onclick="closeModal('editNamesModal')">Cancel</button>
       </div>
@@ -3584,6 +3589,21 @@ function savePurchaseFromModal() {
         const dateValue = dateInput.value; // YYYY-MM-DD
         const supplier = supplierInput.value.trim();
         const orderNumber = orderNumberInput.value.trim();
+        
+         // ——— DEBUG: make sure we’re seeing the right values ———
+       
+        // —— DUPLICATE CHECK ——
+        // If any existing purchase already uses that number, abort:
+        if (transactions.some(t =>
+              t.type === 'purchase'
+           && t.orderNumber === orderNumber
+        )) {
+          alert(
+            `Purchase Order number “${orderNumber}” already exists.\n` +
+            `Please choose a different number or edit the existing order.`
+          );
+          return;
+        }
         const orderDiscount = parseFloat(orderDiscountInput.value) || 0;
 
         if (!dateValue || !supplier) {
@@ -3993,6 +4013,23 @@ function saveEditedPurchase() {
         const dateValue        = dateInput.value;
         const supplier         = supplierInput.value.trim();
         const orderNumber      = orderNumberInput.value.trim();
+
+         // —— DUPLICATE CHECK WHEN EDITING ——
+            // We allow the “original” order number, but if they've changed it,
+            // make sure no other purchase is using the new one:
+            const originalOrder = modal.dataset.originalOrderNumber || '';
+            if (orderNumber !== originalOrder
+                && transactions.some(t =>
+                    t.type === 'purchase'
+                && t.orderNumber === orderNumber
+                )) {
+                alert(
+                `Purchase Order number “${orderNumber}” already exists.\n` +
+                `Please choose a different number or edit the existing order.`
+                );
+                return;
+            }
+
         const orderDiscount    = parseFloat(orderDiscountInput.value) || 0;
 
         if (!dateValue || !supplier) {
@@ -6601,15 +6638,26 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     editBtn.addEventListener('click', () => {
-      const detailModal = document.getElementById('itemDetailsModal');
-      // stash the old values
-      detailModal.dataset.oldItem = detailModal.dataset.itemName;
-      detailModal.dataset.oldMijn = detailModal.dataset.mijnTafelName;
-      // prefill inputs in your rename modal
-      document.getElementById('renameItemInput').value  = detailModal.dataset.itemName;
-      document.getElementById('renameMijnInput').value = detailModal.dataset.mijnTafelName;
-      document.getElementById('editNamesModal').style.display = 'block';
-    });
+        const detailModal = document.getElementById('itemDetailsModal');
+        detailModal.dataset.oldItem = detailModal.dataset.itemName;
+        detailModal.dataset.oldMijn = detailModal.dataset.mijnTafelName;
+
+        // 1) prefill inputs
+        const itemInput = document.getElementById('renameItemInput');
+        const mijnInput = document.getElementById('renameMijnInput');
+        itemInput.value  = detailModal.dataset.itemName;
+        mijnInput.value = detailModal.dataset.mijnTafelName;
+
+        // 2) dynamically size by character length
+        const len1 = itemInput.value.length;
+        const len2 = mijnInput.value.length;
+        const maxLen = Math.max(len1, len2);
+        itemInput.setAttribute('size', maxLen + 2);
+        mijnInput.setAttribute('size',   maxLen + 2);
+
+        // 3) show the modal
+        document.getElementById('editNamesModal').style.display = 'block';
+        });
 
     // 2) Wire up the “Save Changes” in the rename modal
     const saveBtn = document.getElementById('saveRenameBtn');
@@ -6648,6 +6696,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDashboard();
       updateCashFlowTable();
       updateSalesHistoryTable();
+      updateMonthlySalesTable();
 
       closeModal('editNamesModal');
     });

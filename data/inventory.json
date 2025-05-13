@@ -183,7 +183,9 @@
     "Easter Festival Cute Rabbit Series Brooch": 8,
     "Silly Goose Decorative Stickers": 54,
     "Sitting cat with articulated legs - 2 colours: White and Black": 3,
-    "test updated4": 1
+    "test": 1,
+    "test updated6": 2,
+    "test updated2": 8
   },
   "transactions": [
     {
@@ -5360,27 +5362,43 @@
       "type": "purchase"
     },
     {
-      "category": "Accessories",
-      "cost": 4,
-      "date": "13/05/2025",
-      "item": "test updated4",
-      "mijnTafelName": "testMT updated4",
+      "category": "Card",
+      "cost": 2,
+      "date": "14/05/2025",
+      "item": "test",
+      "mijnTafelName": "testMT",
       "orderNumber": "13413",
-      "price": 10,
-      "qty": 2,
+      "price": 5,
+      "qty": 1,
       "supplier": "AliExpress",
-      "total": 8,
+      "total": 2,
       "type": "purchase"
     },
     {
-      "date": "13/05/2025",
-      "item": "test updated4",
-      "mijnTafelName": "testMT updated4",
+      "type": "purchase",
+      "item": "test updated6",
+      "mijnTafelName": "testMT updated6",
+      "qty": 2,
+      "cost": 4,
+      "total": 8,
       "price": 10,
-      "qty": 1,
-      "tablePlace": "19",
-      "total": 10,
-      "type": "sale"
+      "date": "13/05/2025",
+      "supplier": "AliExpress",
+      "orderNumber": "1224",
+      "category": "Accessories"
+    },
+    {
+      "type": "purchase",
+      "item": "test updated2",
+      "mijnTafelName": "testMT updated2",
+      "qty": 8,
+      "cost": 6,
+      "total": 48,
+      "price": 15,
+      "date": "13/05/2025",
+      "supplier": "AliExpress",
+      "orderNumber": "1224",
+      "category": "Bags"
     }
   ],
   "writeOffs": [
