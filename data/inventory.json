@@ -182,7 +182,8 @@
     "Unique Easter Pocket Hug Gift Card": 9,
     "Easter Festival Cute Rabbit Series Brooch": 8,
     "Silly Goose Decorative Stickers": 54,
-    "Sitting cat with articulated legs - 2 colours: White and Black": 3
+    "Sitting cat with articulated legs - 2 colours: White and Black": 3,
+    "test updated4": 1
   },
   "transactions": [
     {
@@ -3708,19 +3709,6 @@
     },
     {
       "category": "3D Prints",
-      "cost": 0.215,
-      "date": "10/02/2025",
-      "item": "Goudse Kaas - 1 colour: Yellow",
-      "mijnTafelName": "Goudse Kaas",
-      "orderNumber": "1",
-      "price": 2,
-      "qty": 4,
-      "supplier": "3D_Fabriek",
-      "total": 0.86,
-      "type": "purchase"
-    },
-    {
-      "category": "3D Prints",
       "cost": 1.37,
       "date": "22/01/2025",
       "item": "3D Printed Chameleon Model with Realistic Eyes - Green",
@@ -5356,6 +5344,42 @@
       "qty": 10,
       "tablePlace": "19",
       "total": 2.3000000000000003,
+      "type": "sale"
+    },
+    {
+      "category": "3D Prints",
+      "cost": 0.215,
+      "date": "10/02/2025",
+      "item": "Goudse Kaas - 1 colour: Yellow",
+      "mijnTafelName": "Goudse Kaas",
+      "orderNumber": "1",
+      "price": 2,
+      "qty": 4,
+      "supplier": "3D_Fabriek",
+      "total": 0.86,
+      "type": "purchase"
+    },
+    {
+      "category": "Accessories",
+      "cost": 4,
+      "date": "13/05/2025",
+      "item": "test updated4",
+      "mijnTafelName": "testMT updated4",
+      "orderNumber": "13413",
+      "price": 10,
+      "qty": 2,
+      "supplier": "AliExpress",
+      "total": 8,
+      "type": "purchase"
+    },
+    {
+      "date": "13/05/2025",
+      "item": "test updated4",
+      "mijnTafelName": "testMT updated4",
+      "price": 10,
+      "qty": 1,
+      "tablePlace": "19",
+      "total": 10,
       "type": "sale"
     }
   ],

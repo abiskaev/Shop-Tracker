@@ -1217,7 +1217,7 @@ function showPanel(name) {
     <!-- 2) Value column -->
     <col style="width: max-content;">
     <!-- 3) Spacer column -->
-    <col style="width: 80px;">
+    <col style="width: 150px;">
     <!-- 4) Pricing‐label column -->
     <col style="width: max-content;">
     <!-- 5) Pricing‐value column -->
@@ -1239,7 +1239,9 @@ function showPanel(name) {
     <td style="border:none; padding:2px 2px 2px 32px;">
       <span id="itemDetailsMijn"></span>
     </td>
-    <td style="border:none;"></td>
+    <td style="border:none; text-align:center;">
+        <button id="openEditNamesBtn">Edit Name</button>
+    </td>
     <td style="border:none; padding:2px;"><strong>Average Price:</strong></td>
     <td style="border:none; padding:2px 2px 2px 32px; text-align:left;">
       <span id="itemDetailsAvgPrice">N/A</span>
@@ -1258,11 +1260,6 @@ function showPanel(name) {
   </tr>
 </table>
 
-
-
-  
-  
-  
       <!-- 2) Purchases -->
       <h4>Purchase History</h4>
       <table id="itemDetailsPurchasesTable">
@@ -1314,6 +1311,26 @@ function showPanel(name) {
         <button onclick="closeModal('itemDetailsModal')">Close</button>
       </div>
   
+    </div>
+  </div>
+  
+
+  <!-- Rename Item/Mijn Namen Modal -->
+<div id="editNamesModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Names</h3>
+      <div>
+        <label for="renameItemInput">Item Name:</label>
+        <input id="renameItemInput" type="text" />
+      </div>
+      <div>
+        <label for="renameMijnInput">Mijn Tafel Name:</label>
+        <input id="renameMijnInput" type="text" />
+      </div>
+      <div style="margin-top:1em; text-align:right;">
+        <button id="saveRenameBtn">Save Changes</button>
+        <button onclick="closeModal('editNamesModal')">Cancel</button>
+      </div>
     </div>
   </div>
   
@@ -1918,6 +1935,7 @@ function addSale() {
 
 
 function updateSalesHistoryTable() {
+    console.log('🔄 updateSalesHistoryTable called; today=', getTodayStrLocal());
     const tableBody = document.getElementById('salesHistoryBody');
     const totalSumElem = document.getElementById('salesTotalSum');
     if (!tableBody || !totalSumElem) return;
@@ -6575,7 +6593,65 @@ function openItemDetailsModal(itemName, mijnTafelName) {
   document.getElementById('itemDetailsModal').style.display = 'block';
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    // 1) Wire up the “Edit Name” opener
+    const editBtn = document.getElementById('openEditNamesBtn');
+    if (!editBtn) {
+      console.error('Missing #openEditNamesBtn in HTML');
+      return;
+    }
+    editBtn.addEventListener('click', () => {
+      const detailModal = document.getElementById('itemDetailsModal');
+      // stash the old values
+      detailModal.dataset.oldItem = detailModal.dataset.itemName;
+      detailModal.dataset.oldMijn = detailModal.dataset.mijnTafelName;
+      // prefill inputs in your rename modal
+      document.getElementById('renameItemInput').value  = detailModal.dataset.itemName;
+      document.getElementById('renameMijnInput').value = detailModal.dataset.mijnTafelName;
+      document.getElementById('editNamesModal').style.display = 'block';
+    });
 
+    // 2) Wire up the “Save Changes” in the rename modal
+    const saveBtn = document.getElementById('saveRenameBtn');
+    if (!saveBtn) {
+      console.error('Missing #saveRenameBtn in HTML');
+      return;
+    }
+    saveBtn.addEventListener('click', () => {
+      const detailModal = document.getElementById('itemDetailsModal');
+      const oldItem = detailModal.dataset.oldItem;
+      const oldMijn = detailModal.dataset.oldMijn;
+      const newItem = document.getElementById('renameItemInput').value.trim();
+      const newMijn = document.getElementById('renameMijnInput').value.trim();
+      if (!newItem || !newMijn) {
+        return alert('Both Item Name and Mijn Tafel Name are required.');
+      }
+      // Update all transactions & write-offs
+      transactions.forEach(t => {
+        if ((t.type === 'purchase' || t.type === 'sale') && t.item === oldItem) {
+          t.item = newItem;
+        }
+        if ((t.type === 'purchase' || t.type === 'sale') && t.mijnTafelName === oldMijn) {
+          t.mijnTafelName = newMijn;
+        }
+      });
+      writeOffs.forEach(w => { if (w.item === oldItem) w.item = newItem; });
+
+      // Refresh the detail modal and all UI
+      detailModal.dataset.itemName      = newItem;
+      detailModal.dataset.mijnTafelName = newMijn;
+      document.getElementById('itemDetailsName').textContent = newItem;
+      document.getElementById('itemDetailsMijn').textContent = newMijn;
+
+      recalculateInventory();
+      updatePurchaseHistoryTable();
+      updateDashboard();
+      updateCashFlowTable();
+      updateSalesHistoryTable();
+
+      closeModal('editNamesModal');
+    });
+  });
 
         </script>
           
